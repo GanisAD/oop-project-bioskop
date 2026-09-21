@@ -1,5 +1,14 @@
+package main;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+import bioskop.Film;
+import bioskop.Jadwal;
+import bioskop.Kursi;
+import bioskop.Studio;
+import model.tiket.Tiket;
+import model.tiket.TiketReguler;
+import model.tiket.TiketVIP;
 
 public class TestJadwalTiket {
     public static void main(String[] args) {

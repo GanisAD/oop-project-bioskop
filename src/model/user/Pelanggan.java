@@ -1,3 +1,6 @@
+package model.user;
+import model.tiket.Tiket;
+
 public class Pelanggan extends Person {
     private String email;
     private String noTelp;

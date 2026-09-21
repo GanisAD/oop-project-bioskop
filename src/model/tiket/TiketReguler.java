@@ -1,3 +1,7 @@
+package model.tiket;
+import model.bioskop.Jadwal;
+import model.bioskop.Kursi;
+
 public class TiketReguler extends Tiket {
 
     public TiketReguler(Jadwal jadwal, Kursi kursi) {

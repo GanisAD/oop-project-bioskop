@@ -1,3 +1,4 @@
+package model.bioskop;
 import java.util.ArrayList;
 
 public class Studio {

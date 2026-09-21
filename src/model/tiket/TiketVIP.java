@@ -1,3 +1,7 @@
+package model.tiket;
+import model.bioskop.Jadwal;
+import model.bioskop.Kursi;
+
 public class TiketVIP extends Tiket {
     private static final double BIAYA_VIP = 25000;
     private String fasilitas;

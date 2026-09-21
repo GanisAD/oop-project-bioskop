@@ -1,3 +1,4 @@
+package model.user;
 public class Person {
     public String id;
     public String nama;

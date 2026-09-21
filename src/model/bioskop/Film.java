@@ -1,3 +1,5 @@
+package model.bioskop;
+
 public class Film {
     private String judul;
     private String genre;

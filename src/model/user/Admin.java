@@ -1,3 +1,7 @@
+package model.user;
+import model.bioskop.Film;
+import model.bioskop.Studio;
+
 public class Admin extends Person {
     public Admin(String id, String nama) {
         super(id, nama);

@@ -1,3 +1,7 @@
+package model.tiket;
+import model.bioskop.Jadwal;
+import model.bioskop.Kursi;
+
 public abstract class Tiket {
     private static int counter = 0;   // dipakai bersama semua tiket
 
