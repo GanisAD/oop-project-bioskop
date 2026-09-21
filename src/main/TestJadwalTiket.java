@@ -2,10 +2,10 @@ package main;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import bioskop.Film;
-import bioskop.Jadwal;
-import bioskop.Kursi;
-import bioskop.Studio;
+import model.bioskop.Film;
+import model.bioskop.Jadwal;
+import model.bioskop.Kursi;
+import model.bioskop.Studio;
 import model.tiket.Tiket;
 import model.tiket.TiketReguler;
 import model.tiket.TiketVIP;
