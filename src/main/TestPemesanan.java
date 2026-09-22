@@ -2,7 +2,6 @@ package main;
 
 import model.bioskop.Bioskop;
 import model.bioskop.Jadwal;
-import model.bioskop.Kursi;
 import model.tiket.Pemesanan;
 import model.user.Pelanggan;
 
@@ -15,7 +14,7 @@ public class TestPemesanan {
         Pelanggan pelanggan1 = new Pelanggan("CUST-001", "Ganis", "ganis@email.com", "08123456789");
         Pelanggan pelanggan2 = new Pelanggan("CUST-002", "Ahmad", "ahmad@email.com", "08987654321");
 
-        // 3. Memilih Jadwal Tayang (misal jadwal index 1: Avatar di Studio 1)
+        // 3. Memilih Jadwal Tayang (misal jadwal indeks 1: Avatar di Studio 1)
         Jadwal jadwalDipilih = xxi.cariJadwal(1);
         if (jadwalDipilih == null) {
             System.out.println("Jadwal tidak ditemukan!");
@@ -35,44 +34,42 @@ public class TestPemesanan {
         System.out.println("=== PROSES PEMESANAN: PELANGGAN 1 ===");
         Pemesanan pesananGanis = xxi.buatPemesanan(pelanggan1, jadwalDipilih);
 
-        Kursi kursiA1 = jadwalDipilih.cariKursi("A1");
-        Kursi kursiB5 = jadwalDipilih.cariKursi("B5");
-
-        pesananGanis.tambahKursi(kursiA1, "Reguler");
-        pesananGanis.tambahKursi(kursiB5, "VIP");
+        // Input langsung berupa teks kode kursi (simulasi klik tombol denah di antarmuka)
+        pesananGanis.tambahKursi("A1", "Reguler");
+        pesananGanis.tambahKursi("B5", "VIP");
         System.out.println();
 
         // Cetak Struk Transaksi 1
         pesananGanis.cetakStruk();
         System.out.println();
 
-        // ===== TRANSAKSI 2: Pelanggan 2 (Ahmad) Mencoba Memesan Kursi yang Sama =====
+        // ===== TRANSAKSI 2: Pelanggan 2 (Ahmad) Menguji Validasi Pemesanan =====
         System.out.println("=== PROSES PEMESANAN: PELANGGAN 2 (UJI VALIDASI) ===");
         Pemesanan pesananAhmad = xxi.buatPemesanan(pelanggan2, jadwalDipilih);
 
-        // A. Coba pesan A1 lagi (Harus GAGAL karena status boolean kursi A1 sudah false)
+        // Percobaan 1: Pesan kursi A1 yang sudah terisi (Harus GAGAL)
         System.out.print("Percobaan 1 (Pesan A1 lagi): ");
-        pesananAhmad.tambahKursi(jadwalDipilih.cariKursi("A1"), "Reguler");
+        pesananAhmad.tambahKursi("A1", "Reguler");
 
-        // B. Coba pesan kursi yang tidak ada di denah studio
+        // Percobaan 2: Pesan kursi yang tidak terdaftar di denah (Harus GAGAL)
         System.out.print("Percobaan 2 (Pesan Z9): ");
-        pesananAhmad.tambahKursi(jadwalDipilih.cariKursi("Z9"), "Reguler");
+        pesananAhmad.tambahKursi("Z9", "Reguler");
 
-        // C. Pesan kursi yang benar-benar masih kosong (B1)
+        // Percobaan 3: Pesan kursi B1 yang masih kosong (Harus BERHASIL)
         System.out.print("Percobaan 3 (Pesan B1): ");
-        pesananAhmad.tambahKursi(jadwalDipilih.cariKursi("B1"), "VIP");
+        pesananAhmad.tambahKursi("B1", "VIP");
         System.out.println();
 
         // Cetak Struk Transaksi 2
         pesananAhmad.cetakStruk();
         System.out.println();
 
-        // 5. Denah Setelah Pemesanan (A1, B5, dan B1 bertanda [X])
+        // 5. Denah Setelah Pemesanan (Kursi A1, B5, dan B1 kini berstatus [X])
         System.out.println("--- Denah Kursi Setelah Seluruh Pemesanan ---");
         jadwalDipilih.tampilkanDenahKursi();
         System.out.println();
 
-        // 6. Verifikasi Riwayat Seluruh Transaksi yang Dicatat Bioskop
+        // 6. Verifikasi Rekap Seluruh Transaksi di Bioskop
         xxi.tampilkanRiwayatTransaksi();
     }
 }

@@ -1,5 +1,6 @@
 package model.user;
 
+import java.time.LocalDateTime;
 import model.bioskop.Bioskop;
 import model.bioskop.Film;
 import model.bioskop.Jadwal;
@@ -11,39 +12,41 @@ public class Admin extends Person {
         super(id, nama);
     }
 
-    // Admin menambahkan film ke sistem bioskop
-    public void tambahFilm(Bioskop bioskop, Film film) {
-        bioskop.tambahFilm(film);
-        System.out.println("[ADMIN: " + getNama() + "] Sukses mendaftarkan film: " + film.getJudul());
+    // Menerima input teks form, Bioskop yang membuat objek Film
+    public Film tambahFilm(Bioskop bioskop, String judul, String genre, int durasi, String rating) {
+        Film f = bioskop.tambahFilm(judul, genre, durasi, rating);
+        System.out.println("[ADMIN: " + getNama() + "] Berhasil mendaftarkan film: " + judul);
+        return f;
     }
 
-    // Admin menghapus film dari sistem bioskop
-    public void hapusFilm(Bioskop bioskop, Film film) {
-        boolean terhapus = bioskop.hapusFilm(film);
-        if (terhapus) {
-            System.out.println("[ADMIN: " + getNama() + "] Sukses menghapus film: " + film.getJudul());
+    public void hapusFilm(Bioskop bioskop, String judulFilm) {
+        boolean berhasil = bioskop.hapusFilm(judulFilm);
+        if (berhasil) {
+            System.out.println("[ADMIN: " + getNama() + "] Berhasil menghapus film: " + judulFilm);
         } else {
-            System.out.println("[ADMIN: " + getNama() + "] Gagal menghapus: Film tidak ditemukan.");
+            System.out.println("[ADMIN: " + getNama() + "] Gagal menghapus: Film '" + judulFilm + "' tidak ditemukan.");
         }
     }
 
-    // Admin menambahkan studio baru (kursi otomatis dibuat di dalam studio)
-    public void tambahStudio(Bioskop bioskop, Studio studio) {
-        bioskop.tambahStudio(studio);
-        System.out.println("[ADMIN: " + getNama() + "] Sukses menambahkan studio: " + studio.getNama() 
-                           + " (" + studio.getKapasitas() + " kursi)");
+    // Menerima input teks & angka form, Bioskop yang membuat objek Studio dan Kursi
+    public Studio tambahStudio(Bioskop bioskop, String namaStudio, int jumlahBaris, int kursiPerBaris) {
+        Studio s = bioskop.tambahStudio(namaStudio, jumlahBaris, kursiPerBaris);
+        System.out.println("[ADMIN: " + getNama() + "] Berhasil menambahkan studio: " + namaStudio 
+                           + " (" + s.getKapasitas() + " kursi)");
+        return s;
     }
 
-    // Admin menambahkan jadwal penayangan baru
-    public void tambahJadwal(Bioskop bioskop, Jadwal jadwal) {
-        bioskop.tambahJadwal(jadwal);
-        System.out.println("[ADMIN: " + getNama() + "] Sukses membuka jadwal baru: " 
-                           + jadwal.getFilm().getJudul() + " di " + jadwal.getStudio().getNama());
+    // Menerima pilihan dropdown dan waktu, Bioskop yang memetakan relasi objeknya
+    public Jadwal tambahJadwal(Bioskop bioskop, String judulFilm, String namaStudio, LocalDateTime waktuTayang, double hargaDasar) {
+        Jadwal j = bioskop.tambahJadwal(judulFilm, namaStudio, waktuTayang, hargaDasar);
+        if (j != null) {
+            System.out.println("[ADMIN: " + getNama() + "] Berhasil membuka jadwal: " + judulFilm + " di " + namaStudio);
+        }
+        return j;
     }
 
-    // Admin menginspeksi seluruh laporan transaksi
     public void lihatTransaksi(Bioskop bioskop) {
-        System.out.println("[ADMIN: " + getNama() + "] Mengakses rekapitulasi transaksi...");
+        System.out.println("[ADMIN: " + getNama() + "] Membuka rekapitulasi transaksi...");
         bioskop.tampilkanRiwayatTransaksi();
     }
 }
