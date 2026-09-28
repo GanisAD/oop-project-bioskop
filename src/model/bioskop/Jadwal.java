@@ -9,7 +9,6 @@ public class Jadwal {
     private Studio studio;
     private LocalDateTime waktuTayang;
     private double hargaDasar;
-    // Menyimpan kursi khusus untuk sesi penayangan ini
     private ArrayList<Kursi> daftarKursiJadwal;
 
     public Jadwal(Film film, Studio studio, LocalDateTime waktuTayang, double hargaDasar) {
@@ -19,20 +18,17 @@ public class Jadwal {
         this.hargaDasar = hargaDasar;
         this.daftarKursiJadwal = new ArrayList<>();
         
-        // Gandakan kursi dari denah studio agar status boolean tiap jadwal mandiri
         for (Kursi k : studio.getDaftarKursi()) {
             daftarKursiJadwal.add(new Kursi(k));
         }
     }
 
-    // ===== Getter =====
     public Film getFilm() { return film; }
     public Studio getStudio() { return studio; }
     public LocalDateTime getWaktuTayang() { return waktuTayang; }
     public double getHargaDasar() { return hargaDasar; }
     public ArrayList<Kursi> getDaftarKursiJadwal() { return daftarKursiJadwal; }
 
-    // Mencari kursi pada jadwal ini berdasarkan kode (misal "A1")
     public Kursi cariKursi(String kode) {
         for (Kursi k : daftarKursiJadwal) {
             if (k.getKode().equalsIgnoreCase(kode)) {
@@ -42,18 +38,15 @@ public class Jadwal {
         return null;
     }
 
-    // ===== Logika kursi (Memanfaatkan boolean dari class Kursi) =====
     public boolean isKursiTersedia(String kodeKursi) {
         Kursi k = cariKursi(kodeKursi);
         return k != null && k.isTersedia();
     }
 
     public boolean pesanKursi(Kursi kursi) {
+        if (kursi == null) return false;
         Kursi k = cariKursi(kursi.getKode());
-        if (k != null) {
-            return k.pesan(); // Memanggil langsung method dari class Kursi
-        }
-        return false;
+        return k != null && k.pesan();
     }
 
     public int getJumlahKursiTerpesan() {
@@ -83,7 +76,6 @@ public class Jadwal {
         System.out.println("Terjual: " + getJumlahKursiTerpesan() + " kursi");
     }
 
-    // Menampilkan denah interaktif jadwal (O = Kosong, X = Terisi)
     public void tampilkanDenahKursi() {
         System.out.println("=== Denah Kursi Jadwal: " + waktuTayang + " ===");
         System.out.println("                 [ LAYAR ]");
@@ -92,8 +84,8 @@ public class Jadwal {
             String status = k.isTersedia() ? "[ ]" : "[X]";
             System.out.print(k.getKode() + status + " ");
             
-            // Mengatur baris denah sesuai lebar studio
-            if ((i + 1) % 8 == 0) { // sesuaikan dengan kursiPerBaris studio
+            // Dinamis sesuai kapasitas kolom studio
+            if ((i + 1) % studio.getKursiPerBaris() == 0) {
                 System.out.println();
             }
         }

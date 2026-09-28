@@ -1,4 +1,5 @@
 package model.bioskop;
+
 import java.util.ArrayList;
 
 public class Studio {
@@ -18,7 +19,6 @@ public class Studio {
         buatKursi();
     }
 
-    // Dipanggil sekali saat studio dibuat: A1..A8, B1..B8, dst.
     private void buatKursi() {
         for (int i = 0; i < jumlahBaris; i++) {
             char baris = (char) ('A' + i);
@@ -29,15 +29,14 @@ public class Studio {
     }
 
     public String getNama() { return nama; }
-
+    public int getJumlahBaris() { return jumlahBaris; }
+    public int getKursiPerBaris() { return kursiPerBaris; } // Ditambahkan untuk denah dinamis
     public int getKapasitas() { return daftarKursi.size(); }
 
-    // Mengembalikan salinan supaya daftar aslinya tidak bisa diubah dari luar
     public ArrayList<Kursi> getDaftarKursi() {
         return new ArrayList<>(daftarKursi);
     }
 
-    // Mencari kursi berdasarkan kode. Mengembalikan null jika tidak ada.
     public Kursi cariKursi(String kode) {
         for (Kursi k : daftarKursi) {
             if (k.getKode().equalsIgnoreCase(kode)) {

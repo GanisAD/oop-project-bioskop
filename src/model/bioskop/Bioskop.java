@@ -23,24 +23,17 @@ public class Bioskop {
     }
 
     private void inisialisasiDataDefault() {
-        Studio studio1 = new Studio("Studio 1", 5, 8);
-        Studio studio2 = new Studio("Studio Premiere", 3, 6);
-        daftarStudio.add(studio1);
-        daftarStudio.add(studio2);
+        tambahStudio("Studio 1", 5, 8);
+        tambahStudio("Studio Premiere", 3, 6);
 
-        Film film1 = new Film("Petualangan Si Garuda", "Petualangan", 120, "13+");
-        Film film2 = new Film("Avatar: The Way of Water", "Sci-Fi", 192, "13+");
-        daftarFilm.add(film1);
-        daftarFilm.add(film2);
+        tambahFilm("Petualangan Si Garuda", "Petualangan", 120, "13+");
+        tambahFilm("Avatar: The Way of Water", "Sci-Fi", 192, "13+");
 
-        LocalDateTime waktu1 = LocalDateTime.of(2026, 9, 25, 14, 0);
-        LocalDateTime waktu2 = LocalDateTime.of(2026, 9, 25, 19, 30);
-        daftarJadwal.add(new Jadwal(film1, studio1, waktu1, 45000));
-        daftarJadwal.add(new Jadwal(film2, studio1, waktu2, 50000));
-        daftarJadwal.add(new Jadwal(film2, studio2, waktu2, 75000));
+        tambahJadwal("Petualangan Si Garuda", "Studio 1", LocalDateTime.of(2026, 9, 25, 14, 0), 45000);
+        tambahJadwal("Avatar: The Way of Water", "Studio 1", LocalDateTime.of(2026, 9, 25, 19, 30), 50000);
+        tambahJadwal("Avatar: The Way of Water", "Studio Premiere", LocalDateTime.of(2026, 9, 25, 19, 30), 75000);
     }
 
-    // ===== GETTER & SETTER NAMA BIOSKOP =====
     public String getNama() { return nama; }
     public void setNama(String nama) { this.nama = nama; }
 
@@ -49,27 +42,55 @@ public class Bioskop {
     public ArrayList<Jadwal> getDaftarJadwal() { return daftarJadwal; }
     public ArrayList<Pemesanan> getDaftarPemesanan() { return daftarPemesanan; }
 
-    // ===== METODE PENGELOLAAN DATA OLEH ADMIN =====
-    public void tambahFilm(Film film) {
-        if (film != null && !daftarFilm.contains(film)) {
-            daftarFilm.add(film);
-        }
+    // ===== FACTORY / CREATOR METHODS (MENERIMA INPUT GUI) =====
+
+    public Film tambahFilm(String judul, String genre, int durasi, String rating) {
+        Film filmBaru = new Film(judul, genre, durasi, rating);
+        daftarFilm.add(filmBaru);
+        return filmBaru;
     }
 
-    public boolean hapusFilm(Film film) {
-        return daftarFilm.remove(film);
+    public Studio tambahStudio(String namaStudio, int jumlahBaris, int kursiPerBaris) {
+        Studio studioBaru = new Studio(namaStudio, jumlahBaris, kursiPerBaris);
+        daftarStudio.add(studioBaru);
+        return studioBaru;
     }
 
-    public void tambahStudio(Studio studio) {
-        if (studio != null && !daftarStudio.contains(studio)) {
-            daftarStudio.add(studio);
+    public Jadwal tambahJadwal(String judulFilm, String namaStudio, LocalDateTime waktuTayang, double hargaDasar) {
+        Film film = cariFilm(judulFilm);
+        if (film == null) {
+            System.out.println("[GAGAL] Film '" + judulFilm + "' tidak ditemukan.");
+            return null;
         }
+
+        Studio studio = cariStudio(namaStudio);
+        if (studio == null) {
+            System.out.println("[GAGAL] Studio '" + namaStudio + "' tidak ditemukan.");
+            return null;
+        }
+
+        Jadwal jadwalBaru = new Jadwal(film, studio, waktuTayang, hargaDasar);
+        daftarJadwal.add(jadwalBaru);
+        return jadwalBaru;
     }
 
-    public void tambahJadwal(Jadwal jadwal) {
-        if (jadwal != null && !daftarJadwal.contains(jadwal)) {
-            daftarJadwal.add(jadwal);
+    // ===== METODE PENCARIAN & VALIDASI =====
+    public Film cariFilm(String judul) {
+        for (Film f : daftarFilm) {
+            if (f.getJudul().equalsIgnoreCase(judul)) {
+                return f;
+            }
         }
+        return null;
+    }
+
+    public Studio cariStudio(String namaStudio) {
+        for (Studio s : daftarStudio) {
+            if (s.getNama().equalsIgnoreCase(namaStudio)) {
+                return s;
+            }
+        }
+        return null;
     }
 
     public Jadwal cariJadwal(int index) {
@@ -79,6 +100,17 @@ public class Bioskop {
         return null;
     }
 
+    public boolean hapusFilm(String judulFilm) {
+        Film target = cariFilm(judulFilm);
+        if (target != null) {
+            daftarFilm.remove(target);
+            daftarJadwal.removeIf(j -> j.getFilm().getJudul().equalsIgnoreCase(judulFilm));
+            return true;
+        }
+        return false;
+    }
+
+    // ===== TRANSAKSI =====
     public Pemesanan buatPemesanan(Pelanggan pelanggan, Jadwal jadwal) {
         if (pelanggan == null || jadwal == null) {
             System.out.println("[GAGAL] Data pelanggan atau jadwal tidak valid.");
@@ -89,6 +121,7 @@ public class Bioskop {
         return pemesananBaru;
     }
 
+    // ===== TAMPILAN =====
     public void tampilkanDaftarJadwal() {
         System.out.println("==================================================");
         System.out.println("       DAFTAR JADWAL TAYANG DI " + nama.toUpperCase());

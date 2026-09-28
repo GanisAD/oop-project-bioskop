@@ -26,22 +26,29 @@ public class Pemesanan {
         this.totalHarga = 0.0;
     }
 
-    // Method untuk memesan kursi dan membuat tiket
-    public boolean tambahKursi(Kursi kursi, String jenisTiket) {
+    
+    public boolean tambahKursi(String kodeKursi, String jenisTiket) {
+        if (kodeKursi == null || kodeKursi.isBlank()) {
+            System.out.println("[GAGAL] Kode kursi tidak boleh kosong!");
+            return false;
+        }
+
+        
+        Kursi kursi = jadwal.cariKursi(kodeKursi);
         if (kursi == null) {
-            System.out.println("Kursi tidak ditemukan!");
+            System.out.println("[GAGAL] Kursi " + kodeKursi + " tidak ada di studio " + jadwal.getStudio().getNama());
             return false;
         }
 
-        // Validasi dan pesan kursi di jadwal
+        
         if (!jadwal.pesanKursi(kursi)) {
-            System.out.println("Kursi " + kursi.getKode() + " gagal dipesan (sudah terisi).");
+            System.out.println("[GAGAL] Kursi " + kodeKursi + " sudah terisi.");
             return false;
         }
 
-        // Buat objek tiket berdasarkan jenisnya
+        
         Tiket tiket;
-        if (jenisTiket.equalsIgnoreCase("VIP")) {
+        if ("VIP".equalsIgnoreCase(jenisTiket)) {
             tiket = new TiketVIP(jadwal, kursi);
         } else {
             tiket = new TiketReguler(jadwal, kursi);
@@ -50,6 +57,16 @@ public class Pemesanan {
         daftarTiket.add(tiket);
         totalHarga += tiket.hitungHarga();
         return true;
+    }
+
+    // Overload Paramter Methode 1
+    public boolean tambahKursi(Kursi kursi, String jenisTiket) {
+        if (kursi == null) {
+            System.out.println("[GAGAL] Objek kursi tidak valid (null)!");
+            return false;
+        }
+        
+        return tambahKursi(kursi.getKode(), jenisTiket);
     }
 
     public void cetakStruk() {
@@ -75,7 +92,6 @@ public class Pemesanan {
         System.out.println("========================================");
     }
 
-    // Getter
     public String getKodeBooking() { return kodeBooking; }
     public Pelanggan getPelanggan() { return pelanggan; }
     public Jadwal getJadwal() { return jadwal; }
