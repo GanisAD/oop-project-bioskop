@@ -1,64 +1,257 @@
 # Sistem Pemesanan Tiket Bioskop (OOP Java)
 
-Aplikasi konsol berbasis Java yang mengimplementasikan prinsip-prinsip Pemrograman Berorientasi Objek (OOP) untuk mensimulasikan operasional sistem bioskop, mulai dari manajemen film dan jadwal oleh admin, hingga pemesanan kursi dan tiket oleh pelanggan.
+Aplikasi konsol interaktif berbasis Java yang mengimplementasikan prinsip-prinsip Pemrograman Berorientasi Objek (OOP) untuk mensimulasikan sistem bioskop lengkap. Aplikasi ini mencakup antarmuka baris perintah (CLI) untuk manajemen bioskop oleh admin serta alur pemesanan tiket oleh pelanggan.
 
 ---
 
 ## 📌 Fitur Utama
 
-- **Manajemen Entitas Pengguna (User Management):**
-  - **Admin:** Mengelola data bioskop, studio, film, dan jadwal penayangan.
-  - **Pelanggan:** Memilih jadwal tayang, memilih nomor kursi, dan melakukan reservasi tiket.
-- **Manajemen Bioskop & Studio:**
-  - Pengelompokan data berdasarkan bioskop, studio, dan kapasitas kursi.
-  - Penjadwalan tayang film per studio.
-- **Sistem Tiket & Transaksi:**
-  - Perhitungan tiket berdasarkan kategori: **Tiket Reguler** dan **Tiket VIP**.
-  - Validasi ketersediaan kursi saat pemesanan berlangsung.
-  - Pencatatan transaksi pemesanan tiket.
+* **Antarmuka Interaktif CLI (`MainCLI`):**
+  * Menu navigasi utama untuk login/peran Admin dan Pelanggan.
+* **Manajemen Peran Pengguna (User Management):**
+  * **Admin:** Mengelola data film, jadwal tayang, dan studio bioskop.
+  * **Pelanggan:** Memilih jadwal tayang film, memilih kursi studio, melakukan pemesanan tiket, serta melihat struk transaksi dan riwayat pesanan.
+* **Manajemen Bioskop & Studio:**
+  * Pengelompokan bioskop berdasarkan studio, denah kursi, dan jadwal penayangan.
+  * Pengecekan ketersediaan kursi secara dinamis saat pemilihan kursi berlangsung.
+* **Sistem Tiket & Transaksi:**
+  * Polimorfisme tiket melalui **Tiket Reguler** dan **Tiket VIP** (dengan fasilitas dan biaya tambahan).
+  * Kalkulasi total pembayaran, status transaksi, dan pencetakan struk.
 
 ---
 
 ## 🏛️ Penerapan Konsep OOP
 
-Proyek ini dirancang dengan mematuhi pilar-pilar OOP:
-
 1. **Inheritance (Pewarisan):**
-   - `Person` diturunkan ke `Admin` dan `Pelanggan`.
-   - `Tiket` diturunkan ke `TiketReguler` dan `TiketVIP`.
+   * `Person` sebagai superclass yang diturunkan ke `Admin` dan `Pelanggan`.
+   * `Tiket` sebagai superclass yang diturunkan ke `TiketReguler` dan `TiketVIP`.
 2. **Polymorphism (Polimorfisme):**
-   - Override metode kalkulasi harga atau fasilitas khusus antara `TiketReguler` dan `TiketVIP`.
+   * Implementasi method `hitungHarga()` dan `cetakTiket()` yang memiliki perilaku berbeda pada `TiketReguler` dan `TiketVIP`.
 3. **Encapsulation (Enkapsulasi):**
-   - Penggunaan akses modifier (`private` / `protected`) dengan metode `getter` dan `setter` untuk melindungi integritas atribut data pada tiap model.
+   * Semua variabel instans dikontrol menggunakan visibility modifier (`private` / `protected`) dan diakses melalui metode `getter` dan `setter`.
 4. **Abstraction (Abstraksi):**
-   - Penggunaan class abstrak atau antarmuka model untuk mendefinisikan kontrak fungsi utama sebelum diimplementasikan secara spesifik.
+   * Pembuatan kelas abstrak (`Person`, `Tiket`) sebagai cetak biru fungsionalitas yang wajib diimplementasikan oleh kelas turunan.
+
+---
+
+## 📊 Class Diagram
+
+```mermaid
+classDiagram
+    direction TB
+
+    %% PACKAGE: model.user
+    class Person {
+        <<abstract>>
+        #String id
+        #String nama
+        #String email
+        #String noTelp
+        +getId() String
+        +getNama() String
+        +getEmail() String
+        +getNoTelp() String
+        +tampilkanProfil()* void
+    }
+
+    class Admin {
+        -String levelAkses
+        +tampilkanProfil() void
+        +tambahFilm(Bioskop bioskop, Film film) void
+        +hapusFilm(Bioskop bioskop, String idFilm) boolean
+        +tambahJadwal(Bioskop bioskop, Jadwal jadwal) void
+        +kelolaStudio(Bioskop bioskop, Studio studio) void
+    }
+
+    class Pelanggan {
+        -int poinLoyalti
+        -List~Pemesanan~ riwayatPemesanan
+        +getPoinLoyalti() int
+        +tambahPoin(int poin) void
+        +tampilkanProfil() void
+        +buatPemesanan(Jadwal jadwal, List~Kursi~ kursiDipilih, String tipeTiket) Pemesanan
+        +getRiwayatPemesanan() List~Pemesanan~
+    }
+
+    Person <|-- Admin : Inheritance
+    Person <|-- Pelanggan : Inheritance
+
+    %% PACKAGE: model.bioskop
+    class Bioskop {
+        -String namaBioskop
+        -String lokasi
+        -List~Studio~ daftarStudio
+        -List~Film~ daftarFilm
+        -List~Jadwal~ daftarJadwal
+        +tambahStudio(Studio studio) void
+        +tambahFilm(Film film) void
+        +tambahJadwal(Jadwal jadwal) void
+        +cariFilm(String keyword) Film
+        +getDaftarStudio() List~Studio~
+        +getDaftarFilm() List~Film~
+        +getDaftarJadwal() List~Jadwal~
+        +tampilkanDaftarFilm() void
+        +tampilkanSemuaJadwal() void
+    }
+
+    class Film {
+        -String idFilm
+        -String judul
+        -String genre
+        -int durasiMenit
+        -double ratingUsia
+        +getIdFilm() String
+        +getJudul() String
+        +getGenre() String
+        +getDurasiMenit() int
+        +getDetailFilm() String
+    }
+
+    class Studio {
+        -String idStudio
+        -String namaStudio
+        -String tipeStudio
+        -List~Kursi~ daftarKursi
+        +getIdStudio() String
+        +getNamaStudio() String
+        +getTipeStudio() String
+        +getDaftarKursi() List~Kursi~
+        +cariKursi(String nomorKursi) Kursi
+    }
+
+    class Kursi {
+        -String nomorKursi
+        -boolean isTersedia
+        +getNomorKursi() String
+        +isTersedia() boolean
+        +setTersedia(boolean status) void
+    }
+
+    class Jadwal {
+        -String idJadwal
+        -Film film
+        -Studio studio
+        -String waktuMulai
+        -double hargaDasar
+        +getIdJadwal() String
+        +getFilm() Film
+        +getStudio() Studio
+        +getWaktuMulai() String
+        +getHargaDasar() double
+        +tampilkanDenahKursi() void
+        +pesanKursi(String nomorKursi) boolean
+    }
+
+    Bioskop "1" *-- "*" Studio : Composition
+    Bioskop "1" o-- "*" Film : Aggregation
+    Bioskop "1" o-- "*" Jadwal : Manages
+    Studio "1" *-- "*" Kursi : Composition
+    Jadwal "1" --> "1" Film : References
+    Jadwal "1" --> "1" Studio : References
+
+    %% PACKAGE: model.tiket
+    class Tiket {
+        <<abstract>>
+        #String idTiket
+        #Jadwal jadwal
+        #Kursi kursi
+        #double harga
+        +getIdTiket() String
+        +getJadwal() Jadwal
+        +getKursi() Kursi
+        +hitungHarga()* double
+        +cetakTiket()* void
+    }
+
+    class TiketReguler {
+        +hitungHarga() double
+        +cetakTiket() void
+    }
+
+    class TiketVIP {
+        -double serviceFee
+        -List~String~ fasilitasTambahan
+        +hitungHarga() double
+        +cetakTiket() void
+        +getFasilitas() List~String~
+    }
+
+    Tiket <|-- TiketReguler : Inheritance
+    Tiket <|-- TiketVIP : Inheritance
+    Tiket "1" --> "1" Jadwal : References
+    Tiket "1" --> "1" Kursi : References
+
+    class Pemesanan {
+        -String idPemesanan
+        -Pelanggan pelanggan
+        -List~Tiket~ daftarTiket
+        -double totalBayar
+        -String statusPembayaran
+        +tambahTiket(Tiket tiket) void
+        +hitungTotal() double
+        +prosesPembayaran(double jumlahBayar) boolean
+        +cetakStruk() void
+    }
+
+    Pelanggan "1" o-- "*" Pemesanan : Has
+    Pemesanan "1" *-- "*" Tiket : Composition
+    Pemesanan --> Pelanggan : Associated with
+
+    %% PACKAGE: main
+    class MainCLI {
+        -Bioskop bioskop
+        -Scanner scanner
+        +main(String[] args)$ void
+        +menuUtama() void
+        +menuAdmin() void
+        +menuPelanggan() void
+    }
+
+    class TestAdmin {
+        +main(String[] args)$ void
+    }
+
+    class TestPemesanan {
+        +main(String[] args)$ void
+    }
+
+    MainCLI ..> Bioskop : Controls
+    MainCLI ..> Admin : Uses
+    MainCLI ..> Pelanggan : Uses
+    TestAdmin ..> Admin : Tests
+    TestAdmin ..> Bioskop : Tests
+    TestPemesanan ..> Pelanggan : Tests
+    TestPemesanan ..> Pemesanan : Tests
+```
 
 ---
 
 ## 📂 Struktur Proyek
 
-```text
+```
 oop-project-bioskop/
 ├── src/
 │   ├── main/
-│   │   ├── TestAdmin.java          # Kelas pengujian alur kerja Admin
+│   │   ├── MainCLI.java            # Entry point antarmuka interaktif CLI
+│   │   ├── TestAdmin.java          # Kelas pengujian fungsionalitas Admin
 │   │   └── TestPemesanan.java      # Kelas pengujian transaksi pemesanan
 │   └── model/
 │       ├── bioskop/
-│       │   ├── Bioskop.java        # Representasi data bioskop
-│       │   ├── Film.java           # Model informasi film
-│       │   ├── Jadwal.java         # Model jadwal penayangan
-│       │   ├── Kursi.java          # Model kursi dan status keterisian
+│       │   ├── Bioskop.java        # Representasi data bioskop & manajemen jadwal
+│       │   ├── Film.java           # Model film
+│       │   ├── Jadwal.java         # Model jadwal pemutaran film & denah kursi
+│       │   ├── Kursi.java          # Model kursi & status ketersediaan
 │       │   └── Studio.java         # Model studio penayangan
 │       ├── tiket/
-│       │   ├── Pemesanan.java      # Transaksi pemesanan tiket
-│       │   ├── Tiket.java          # Base class tiket
+│       │   ├── Pemesanan.java      # Model transaksi pemesanan tiket
+│       │   ├── Tiket.java          # Base abstract class tiket
 │       │   ├── TiketReguler.java   # Subclass tiket reguler
 │       │   └── TiketVIP.java       # Subclass tiket VIP
 │       └── user/
-│           ├── Admin.java          # Subclass untuk akun administrator
-│           ├── Pelanggan.java      # Subclass untuk akun pelanggan
-│           └── Person.java         # Base class untuk data personal
+│           ├── Admin.java          # Subclass akun administrator
+│           ├── Pelanggan.java      # Subclass akun pelanggan
+│           └── Person.java         # Base abstract class entitas pengguna
+├── .gitattributes
 ├── .gitignore
 ├── LICENSE
 └── README.md
@@ -69,10 +262,11 @@ oop-project-bioskop/
 ## 🚀 Panduan Menjalankan Program
 
 ### Prasyarat
-- Java Development Kit (JDK) versi 8 atau lebih baru.
+* **Java Development Kit (JDK)** versi 8 atau yang lebih baru.
 
 ### Kompilasi
-Buka terminal / command prompt pada root direktori proyek, lalu jalankan perintah kompilasi:
+
+Buka terminal pada direktori root proyek dan jalankan perintah berikut:
 
 ```bash
 # Untuk Linux / macOS
@@ -82,16 +276,24 @@ javac -d bin $(find src -name "*.java")
 dir /s /B src\*.java > sources.txt
 javac -d bin @sources.txt
 del sources.txt
+
+# Untuk Windows (PowerShell)
+javac -d bin (Get-ChildItem -Recurse -Filter *.java src | Resolve-Path)
 ```
 
-### Menjalankan Program Pengujian
+### Menjalankan Program
 
-1. **Menjalankan pengujian fungsionalitas Admin:**
+1. **Menjalankan Program Utama (Interactive CLI):**
+   ```bash
+   java -cp bin main.MainCLI
+   ```
+
+2. **Menjalankan Pengujian Modul Admin:**
    ```bash
    java -cp bin main.TestAdmin
    ```
 
-2. **Menjalankan simulasi Pemesanan Tiket:**
+3. **Menjalankan Pengujian Alur Pemesanan:**
    ```bash
    java -cp bin main.TestPemesanan
    ```
@@ -100,4 +302,4 @@ del sources.txt
 
 ## 📄 Lisensi
 
-Proyek ini didistribusikan di bawah lisensi open-source sesuai file [LICENSE](LICENSE).
+Didistribusikan di bawah ketentuan lisensi open-source sesuai file [LICENSE](LICENSE).
