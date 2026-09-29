@@ -208,12 +208,36 @@
 }
 
 .badge-rating {
-    -fx-background-color: #E11D48;
-    -fx-text-fill: white;
+    -fx-text-fill: #FFFFFF;
     -fx-background-radius: 6px;
     -fx-padding: 3px 8px;
     -fx-font-size: 10px;
     -fx-font-weight: bold;
+}
+
+.badge-rating-su {
+    -fx-background-color: #10B981; /* Hijau - Semua Umur */
+    -fx-text-fill: #FFFFFF;
+}
+
+.badge-rating-13 {
+    -fx-background-color: #0284C7; /* Biru - Remaja 13+ */
+    -fx-text-fill: #FFFFFF;
+}
+
+.badge-rating-17 {
+    -fx-background-color: #E11D48; /* Merah - Dewasa 17+ */
+    -fx-text-fill: #FFFFFF;
+}
+
+.badge-rating-21 {
+    -fx-background-color: #7C3AED; /* Ungu - Dewasa Khusus 21+ */
+    -fx-text-fill: #FFFFFF;
+}
+
+.badge-rating-default {
+    -fx-background-color: #475569; /* Slate Gray */
+    -fx-text-fill: #FFFFFF;
 }
 
 /* ========================================================

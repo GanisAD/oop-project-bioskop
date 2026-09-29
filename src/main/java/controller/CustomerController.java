@@ -65,6 +65,11 @@ public class CustomerController implements Initializable {
         txtSearchFilm.textProperty().addListener((obs, oldVal, newVal) -> filterAndRenderCatalog(newVal));
 
         // Listener perubahan tipe tiket
+        if (tipeTiketGroup == null) {
+            tipeTiketGroup = new ToggleGroup();
+            rbTiketReguler.setToggleGroup(tipeTiketGroup);
+            rbTiketVIP.setToggleGroup(tipeTiketGroup);
+        }
         tipeTiketGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> updateTotalHarga());
 
         refreshData();
@@ -140,7 +145,7 @@ public class CustomerController implements Initializable {
         lblJudul.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #F8FAFC;");
 
         Label badgeRating = new Label(film.getRating());
-        badgeRating.getStyleClass().add("badge-rating");
+        badgeRating.getStyleClass().addAll("badge-rating", getRatingBadgeClass(film.getRating()));
 
         Label badgeGenre = new Label(film.getGenre());
         badgeGenre.getStyleClass().add("badge-tag");
@@ -374,6 +379,21 @@ public class CustomerController implements Initializable {
         seatSelectionPane.setVisible(false);
         catalogPane.setVisible(true);
         refreshData();
+    }
+
+    public static String getRatingBadgeClass(String rating) {
+        if (rating == null) return "badge-rating-default";
+        String r = rating.trim().toUpperCase();
+        if (r.contains("SU")) {
+            return "badge-rating-su";
+        } else if (r.contains("13")) {
+            return "badge-rating-13";
+        } else if (r.contains("17")) {
+            return "badge-rating-17";
+        } else if (r.contains("21")) {
+            return "badge-rating-21";
+        }
+        return "badge-rating-default";
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {

@@ -84,6 +84,21 @@ public class AdminController implements Initializable {
         colFilmGenre.setCellValueFactory(new PropertyValueFactory<>("genre"));
         colFilmDurasi.setCellValueFactory(new PropertyValueFactory<>("durasi"));
         colFilmRating.setCellValueFactory(new PropertyValueFactory<>("rating"));
+        colFilmRating.setCellFactory(column -> new TableCell<Film, String>() {
+            @Override
+            protected void updateItem(String rating, boolean empty) {
+                super.updateItem(rating, empty);
+                if (empty || rating == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    Label badge = new Label(rating);
+                    badge.getStyleClass().addAll("badge-rating", CustomerController.getRatingBadgeClass(rating));
+                    setGraphic(badge);
+                    setText(null);
+                }
+            }
+        });
 
         // Kolom Jadwal
         colJadwalFilm.setCellValueFactory(new PropertyValueFactory<>("judulFilm"));

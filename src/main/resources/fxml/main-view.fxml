@@ -34,10 +34,11 @@
 
             <!-- Mode Switcher Nav Buttons -->
             <HBox alignment="CENTER" spacing="10.0">
-                <fx:define>
-                    <ToggleGroup fx:id="navGroup" />
-                </fx:define>
-                <RadioButton fx:id="btnNavCustomer" text="🎬 Pemesanan Tiket" toggleGroup="$navGroup" selected="true" styleClass="nav-toggle-btn" />
+                <RadioButton fx:id="btnNavCustomer" text="🎬 Pemesanan Tiket" selected="true" styleClass="nav-toggle-btn">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="navGroup" />
+                    </toggleGroup>
+                </RadioButton>
                 <RadioButton fx:id="btnNavAdmin" text="⚙️ Kelola Bioskop" toggleGroup="$navGroup" styleClass="nav-toggle-btn" />
             </HBox>
 

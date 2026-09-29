@@ -121,10 +121,11 @@
                 <VBox spacing="8.0">
                     <Label text="Pilihan Tipe Tiket" style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;" />
                     <VBox spacing="6.0">
-                        <fx:define>
-                            <ToggleGroup fx:id="tipeTiketGroup" />
-                        </fx:define>
-                        <RadioButton fx:id="rbTiketReguler" text="Reguler (Standar)" toggleGroup="$tipeTiketGroup" selected="true" />
+                        <RadioButton fx:id="rbTiketReguler" text="Reguler (Standar)" selected="true">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="tipeTiketGroup" />
+                            </toggleGroup>
+                        </RadioButton>
                         <RadioButton fx:id="rbTiketVIP" text="VIP (+Rp 25.000 - Recliner &amp; Snack)" toggleGroup="$tipeTiketGroup" />
                     </VBox>
                 </VBox>

@@ -34,6 +34,12 @@ public class MainController implements Initializable {
 
         loadViews();
 
+        if (navGroup == null) {
+            navGroup = new ToggleGroup();
+            btnNavCustomer.setToggleGroup(navGroup);
+            btnNavAdmin.setToggleGroup(navGroup);
+        }
+
         navGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == btnNavCustomer) {
                 switchToCustomerView();
