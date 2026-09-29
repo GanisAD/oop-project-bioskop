@@ -40,4 +40,9 @@ public class Film {
     public void tampilkanInfo() {
         System.out.println(judul + " | " + genre + " | " + durasi + " menit | " + rating);
     }
+
+    @Override
+    public String toString() {
+        return judul;
+    }
 }

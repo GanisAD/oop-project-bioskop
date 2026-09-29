@@ -90,4 +90,25 @@ public class Jadwal {
             }
         }
     }
+
+    public String getJudulFilm() {
+        return film != null ? film.getJudul() : "-";
+    }
+
+    public String getNamaStudio() {
+        return studio != null ? studio.getNama() : "-";
+    }
+
+    public String getHargaDasarFormat() {
+        return String.format("Rp%,.0f", hargaDasar);
+    }
+
+    public String getStatusKeterisian() {
+        return getJumlahKursiTerpesan() + " / " + daftarKursiJadwal.size() + " Kursi";
+    }
+
+    @Override
+    public String toString() {
+        return getJudulFilm() + " - " + getNamaStudio() + " (" + getWaktuFormat() + ")";
+    }
 }

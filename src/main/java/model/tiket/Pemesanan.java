@@ -3,6 +3,7 @@ package model.tiket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
 import model.bioskop.Jadwal;
 import model.bioskop.Kursi;
 import model.user.Pelanggan;
@@ -97,4 +98,46 @@ public class Pemesanan {
     public Jadwal getJadwal() { return jadwal; }
     public ArrayList<Tiket> getDaftarTiket() { return daftarTiket; }
     public double getTotalHarga() { return totalHarga; }
+    public LocalDateTime getWaktuTransaksi() { return waktuTransaksi; }
+
+    public String getNamaPelanggan() {
+        return pelanggan != null ? pelanggan.getNama() : "-";
+    }
+
+    public String getNoTelpPelanggan() {
+        return pelanggan != null ? pelanggan.getNoTelp() : "-";
+    }
+
+    public String getJudulFilm() {
+        return (jadwal != null && jadwal.getFilm() != null) ? jadwal.getFilm().getJudul() : "-";
+    }
+
+    public String getNamaStudio() {
+        return (jadwal != null && jadwal.getStudio() != null) ? jadwal.getStudio().getNama() : "-";
+    }
+
+    public String getKodeKursiList() {
+        if (daftarTiket.isEmpty()) return "-";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < daftarTiket.size(); i++) {
+            sb.append(daftarTiket.get(i).getKursi().getKode());
+            if (i < daftarTiket.size() - 1) sb.append(", ");
+        }
+        return sb.toString();
+    }
+
+    public String getJenisTiketList() {
+        if (daftarTiket.isEmpty()) return "-";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < daftarTiket.size(); i++) {
+            sb.append(daftarTiket.get(i).getJenisTiket());
+            if (i < daftarTiket.size() - 1) sb.append(", ");
+        }
+        return sb.toString();
+    }
+
+    public String getWaktuFormat() {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        return waktuTransaksi.format(fmt);
+    }
 }
