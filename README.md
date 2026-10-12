@@ -78,186 +78,172 @@ mvn clean test
 
 ```mermaid
 classDiagram
-    direction TB
-
-    class Person {
-        <<abstract>>
-        #String id
-        #String nama
-        #String email
-        #String noTelp
-        +getId() String
-        +getNama() String
-        +getEmail() String
-        +getNoTelp() String
-        +tampilkanProfil()* void
+    namespace app {
+        class App {
+            + start(Stage primaryStage)
+            + main(String[] args)
+        }
+        class AppContext {
+            - static AppContext instance
+            - Bioskop bioskop
+            - Person currentUser
+            + getInstance() AppContext
+            + getBioskop() Bioskop
+            + setBioskop(Bioskop bioskop)
+            + getCurrentUser() Person
+            + setCurrentUser(Person user)
+        }
+        class MainApp {
+            + main(String[] args)
+        }
+        class MainCLI {
+            + main(String[] args)
+        }
     }
 
-    class Admin {
-        -String levelAkses
-        +tampilkanProfil() void
-        +tambahFilm(Bioskop bioskop, Film film) void
-        +hapusFilm(Bioskop bioskop, String idFilm) boolean
-        +tambahJadwal(Bioskop bioskop, Jadwal jadwal) void
-        +kelolaStudio(Bioskop bioskop, Studio studio) void
+    namespace controller {
+        class MainController {
+            - AppContext context
+            + handleLogin()
+            + handleRegister()
+            + navigateToDashboard()
+        }
+        class AdminController {
+            - AppContext context
+            + handleTambahFilm()
+            + handleHapusFilm()
+            + handleTambahJadwal()
+            + handleKelolaStudio()
+        }
+        class CustomerController {
+            - AppContext context
+            + handlePilihFilm()
+            + handlePilihJadwal()
+            + handlePilihKursi()
+            + handleBuatPemesanan()
+            + handleCetakTiket()
+        }
     }
 
-    class Pelanggan {
-        -int poinLoyalti
-        -List~Pemesanan~ riwayatPemesanan
-        +getPoinLoyalti() int
-        +tambahPoin(int poin) void
-        +tampilkanProfil() void
-        +buatPemesanan(Jadwal jadwal, List~Kursi~ kursiDipilih, String tipeTiket) Pemesanan
-        +getRiwayatPemesanan() List~Pemesanan~
+    namespace model_user {
+        class Person {
+            <<abstract>>
+            # String id
+            # String nama
+            # String email
+            # String password
+            + getId() String
+            + getNama() String
+            + getEmail() String
+        }
+        class Admin {
+            + kelolaFilm()
+            + kelolaJadwal()
+        }
+        class Pelanggan {
+            - String noTelepon
+            - double saldo
+            + getNoTelepon() String
+            + getSaldo() double
+        }
     }
 
-    Person <|-- Admin : Inheritance
-    Person <|-- Pelanggan : Inheritance
-
-    class Bioskop {
-        -String namaBioskop
-        -String lokasi
-        -List~Studio~ daftarStudio
-        -List~Film~ daftarFilm
-        -List~Jadwal~ daftarJadwal
-        +tambahStudio(Studio studio) void
-        +tambahFilm(Film film) void
-        +tambahJadwal(Jadwal jadwal) void
-        +cariFilm(String keyword) Film
-        +getDaftarStudio() List~Studio~
-        +getDaftarFilm() List~Film~
-        +getDaftarJadwal() List~Jadwal~
-        +tampilkanDaftarFilm() void
-        +tampilkanSemuaJadwal() void
+    namespace model_bioskop {
+        class Bioskop {
+            - String namaBioskop
+            - List~Studio~ daftarStudio
+            - List~Film~ daftarFilm
+            - List~Pemesanan~ daftarPemesanan
+            + tambahFilm(Film film)
+            + tambahStudio(Studio studio)
+            + tambahPemesanan(Pemesanan pemesanan)
+        }
+        class Studio {
+            - String idStudio
+            - String namaStudio
+            - int kapasitas
+            - List~Kursi~ daftarKursi
+            - List~Jadwal~ daftarJadwal
+            + getKursiTersedia() List~Kursi~
+        }
+        class Film {
+            - String idFilm
+            - String judul
+            - String genre
+            - int durasiMenit
+            - String ratingUsia
+        }
+        class Jadwal {
+            - String idJadwal
+            - Film film
+            - Studio studio
+            - LocalDateTime waktuMulai
+            - double hargaDasar
+        }
+        class Kursi {
+            - String nomorKursi
+            - boolean isTerisi
+            + setStatus(boolean status)
+        }
     }
 
-    class Film {
-        -String idFilm
-        -String judul
-        -String genre
-        -int durasiMenit
-        -double ratingUsia
-        +getIdFilm() String
-        +getJudul() String
-        +getGenre() String
-        +getDurasiMenit() int
-        +getDetailFilm() String
+    namespace model_tiket {
+        class Tiket {
+            <<abstract>>
+            # String idTiket
+            # Kursi kursi
+            # double hargaBase
+            + calculateHarga()* double
+        }
+        class TiketReguler {
+            + calculateHarga() double
+        }
+        class TiketVIP {
+            - double serviceFee
+            + calculateHarga() double
+        }
+        class Pemesanan {
+            - String idPemesanan
+            - Pelanggan pelanggan
+            - Jadwal jadwal
+            - List~Tiket~ daftarTiket
+            - double totalBayar
+            - String statusPembayaran
+            + hitungTotal() double
+            + konfirmasiPembayaran() boolean
+        }
     }
 
-    class Studio {
-        -String idStudio
-        -String namaStudio
-        -String tipeStudio
-        -List~Kursi~ daftarKursi
-        +getIdStudio() String
-        +getNamaStudio() String
-        +getTipeStudio() String
-        +getDaftarKursi() List~Kursi~
-        +cariKursi(String nomorKursi) Kursi
-    }
+    %% Relationships
+    Person <|-- Admin
+    Person <|-- Pelanggan
 
-    class Kursi {
-        -String nomorKursi
-        -boolean isTersedia
-        +getNomorKursi() String
-        +isTersedia() boolean
-        +setTersedia(boolean status) void
-    }
+    Tiket <|-- TiketReguler
+    Tiket <|-- TiketVIP
 
-    class Jadwal {
-        -String idJadwal
-        -Film film
-        -Studio studio
-        -String waktuMulai
-        -double hargaDasar
-        +getIdJadwal() String
-        +getFilm() Film
-        +getStudio() Studio
-        +getWaktuMulai() String
-        +getHargaDasar() double
-        +tampilkanDenahKursi() void
-        +pesanKursi(String nomorKursi) boolean
-    }
+    Bioskop "1" *-- "many" Studio
+    Bioskop "1" *-- "many" Film
+    Bioskop "1" *-- "many" Pemesanan
 
-    Bioskop "1" *-- "*" Studio : Composition
-    Bioskop "1" o-- "*" Film : Aggregation
-    Bioskop "1" o-- "*" Jadwal : Manages
-    Studio "1" *-- "*" Kursi : Composition
-    Jadwal "1" --> "1" Film : References
-    Jadwal "1" --> "1" Studio : References
+    Studio "1" *-- "many" Kursi
+    Studio "1" o-- "many" Jadwal
+    Jadwal "1" --> "1" Film
+    Jadwal "1" --> "1" Studio
 
-    class Tiket {
-        <<abstract>>
-        #String idTiket
-        #Jadwal jadwal
-        #Kursi kursi
-        #double harga
-        +getIdTiket() String
-        +getJadwal() Jadwal
-        +getKursi() Kursi
-        +hitungHarga()* double
-        +cetakTiket()* void
-    }
+    Pemesanan "1" --> "1" Pelanggan
+    Pemesanan "1" --> "1" Jadwal
+    Pemesanan "1" *-- "many" Tiket
+    Tiket "1" --> "1" Kursi
 
-    class TiketReguler {
-        +hitungHarga() double
-        +cetakTiket() void
-    }
+    App ..> AppContext
+    MainApp ..> App
+    
+    MainController --> AppContext
+    AdminController --> AppContext
+    CustomerController --> AppContext
 
-    class TiketVIP {
-        -double serviceFee
-        -List~String~ fasilitasTambahan
-        +hitungHarga() double
-        +cetakTiket() void
-        +getFasilitas() List~String~
-    }
-
-    Tiket <|-- TiketReguler : Inheritance
-    Tiket <|-- TiketVIP : Inheritance
-    Tiket "1" --> "1" Jadwal : References
-    Tiket "1" --> "1" Kursi : References
-
-    class Pemesanan {
-        -String idPemesanan
-        -Pelanggan pelanggan
-        -List~Tiket~ daftarTiket
-        -double totalBayar
-        -String statusPembayaran
-        +tambahTiket(Tiket tiket) void
-        +hitungTotal() double
-        +prosesPembayaran(double jumlahBayar) boolean
-        +cetakStruk() void
-    }
-
-    Pelanggan "1" o-- "*" Pemesanan : Has
-    Pemesanan "1" *-- "*" Tiket : Composition
-    Pemesanan --> Pelanggan : Associated with
-
-    class MainCLI {
-        -Bioskop bioskop
-        -Scanner scanner
-        +main(String[] args)$ void
-        +menuUtama() void
-        +menuAdmin() void
-        +menuPelanggan() void
-    }
-
-    class TestAdmin {
-        +main(String[] args)$ void
-    }
-
-    class TestPemesanan {
-        +main(String[] args)$ void
-    }
-
-    MainCLI ..> Bioskop : Controls
-    MainCLI ..> Admin : Uses
-    MainCLI ..> Pelanggan : Uses
-    TestAdmin ..> Admin : Tests
-    TestAdmin ..> Bioskop : Tests
-    TestPemesanan ..> Pelanggan : Tests
-    TestPemesanan ..> Pemesanan : Tests
+    AdminController ..> Bioskop : Manages
+    CustomerController ..> Pemesanan : Creates
 ```
 ---
 ## 📁 Struktur Direktori Proyek
