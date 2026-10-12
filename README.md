@@ -1,46 +1,85 @@
-# Sistem Pemesanan Tiket Bioskop (OOP Java)
+# 🍿 Cinema XXI - Sistem Pemesanan & Manajemen Bioskop (OOP Java)
 
-Aplikasi konsol interaktif berbasis Java yang mengimplementasikan prinsip-prinsip Pemrograman Berorientasi Objek (OOP) untuk mensimulasikan sistem bioskop lengkap. Aplikasi ini mencakup antarmuka baris perintah (CLI) untuk manajemen bioskop oleh admin serta alur pemesanan tiket oleh pelanggan.
+Aplikasi Desktop sistem bioskop modern berbasis **JavaFX**, **FXML**, dan **Apache Maven** untuk mata kuliah Object-Oriented Programming (OOP).
 
 ---
 
-## 📌 Fitur Utama
+## 🌟 Fitur Utama
 
-* **Antarmuka Interaktif CLI (`MainCLI`):**
-  * Menu navigasi utama untuk login/peran Admin dan Pelanggan.
-* **Manajemen Peran Pengguna (User Management):**
-  * **Admin:** Mengelola data film, jadwal tayang, dan studio bioskop.
-  * **Pelanggan:** Memilih jadwal tayang film, memilih kursi studio, melakukan pemesanan tiket, serta melihat struk transaksi dan riwayat pesanan.
-* **Manajemen Bioskop & Studio:**
-  * Pengelompokan bioskop berdasarkan studio, denah kursi, dan jadwal penayangan.
-  * Pengecekan ketersediaan kursi secara dinamis saat pemilihan kursi berlangsung.
-* **Sistem Tiket & Transaksi:**
-  * Polimorfisme tiket melalui **Tiket Reguler** dan **Tiket VIP** (dengan fasilitas dan biaya tambahan).
-  * Kalkulasi total pembayaran, status transaksi, dan pencetakan struk.
+### 🎬 1. Alur Pelanggan (Customer Booking Experience)
+- **Katalog Film Sedang Tayang**: Tampilan kartu film modern lengkap dengan poster box, judul, genre, durasi, dan badge batas usia (misal `13+`).
+- **Jadwal & Studio Chips**: Jadwal tayang dikelompokkan berdasarkan studio dengan tombol chip waktu dan harga tiket yang interaktif.
+- **Pencarian Film Real-time**: Fitur pencarian cepat berdasarkan judul film atau genre.
+- **Denah Kursi Studio Interaktif**:
+  - Representasi lengkung visual layar bioskop.
+  - Matriks kursi dinamis (`Studio.getJumlahBaris()`, `Studio.getKursiPerBaris()`) dengan lorong jalan.
+  - Indikator visual real-time: **Tersedia (Emerald)**, **Terpilih (Cinema Gold)**, dan **Sudah Terisi (Disabled Muted)**.
+- **Opsi Tipe Tiket**:
+  - **Reguler**: Sesuai harga dasar studio/jadwal.
+  - **VIP**: Tambahan fasilitas kursi *recliner*, snack, dan minuman (+Rp 25.000).
+- **E-Tiket & Struk Transaksi Eksklusif**: Tampilan struk bergaya *boarding pass* lengkap dengan kode booking (`BOOK-xxxx`), detail pemesanan, dan mock barcode.
+
+### ⚙️ 2. Panel Pengelola Bioskop (Admin Mode)
+- **Ringkasan Metrik / KPI**: Kartu statistik total omset pendapatan, total transaksi pemesanan tiket, total film aktif, dan jumlah studio.
+- **Manajemen Film**:
+  - Tabel daftar seluruh film yang terdaftar.
+  - Formulir pendaftaran film baru dengan validasi otomatis (judul, genre, durasi > 0, rating usia).
+  - Aksi hapus film beserta jadwal terkait dengan dialog konfirmasi.
+- **Manajemen Jadwal Tayang**:
+  - Formulir pembukaan jadwal baru dengan relasi objek Film, Studio, DatePicker tanggal, ComboBox jam tayang, dan harga tiket.
+  - Tabel jadwal tayang aktif beserta indikator kapasitas kursi yang sudah laku terjual.
+- **Rekapitulasi Transaksi**:
+  - Tabel riwayat seluruh pemesanan tiket.
+  - Pencarian transaksi berdasarkan kode booking, nama pemesan, atau judul film.
 
 ---
 
 ## 🏛️ Penerapan Konsep OOP
 
-1. **Inheritance (Pewarisan):**
-   * `Person` sebagai superclass yang diturunkan ke `Admin` dan `Pelanggan`.
-   * `Tiket` sebagai superclass yang diturunkan ke `TiketReguler` dan `TiketVIP`.
-2. **Polymorphism (Polimorfisme):**
-   * Implementasi method `hitungHarga()` dan `cetakTiket()` yang memiliki perilaku berbeda pada `TiketReguler` dan `TiketVIP`.
-3. **Encapsulation (Enkapsulasi):**
-   * Semua variabel instans dikontrol menggunakan visibility modifier (`private` / `protected`) dan diakses melalui metode `getter` dan `setter`.
-4. **Abstraction (Abstraksi):**
-   * Pembuatan kelas abstrak (`Person`, `Tiket`) sebagai cetak biru fungsionalitas yang wajib diimplementasikan oleh kelas turunan.
+1. **Inheritance (Pewarisan)**:
+   - `Person` diturunkan menjadi `Pelanggan` dan `Admin`.
+   - `Tiket` (abstract) diturunkan menjadi `TiketReguler` dan `TiketVIP`.
+2. **Polymorphism (Polimorfisme)**:
+   - Override metode `hitungHarga()` dan `getJenisTiket()` pada `TiketReguler` dan `TiketVIP`.
+   - Overloading metode `tambahKursi(String kodeKursi, String jenis)` dan `tambahKursi(Kursi kursi, String jenis)`.
+3. **Encapsulation (Enkapsulasi)**:
+   - Penerapan *access modifier* `private` pada data atribut.
+   - Validasi ketat pada setter (misal: judul film tidak boleh kosong, durasi > 0, kapasitas studio 1-26 baris).
+4. **Abstraction & Aggregation**:
+   - `Bioskop` sebagai *aggregate root* yang mengelola koleksi `Film`, `Studio`, `Jadwal`, dan `Pemesanan`.
+   - Pemisahan arsitektur **MVC (Model-View-Controller)** yang bersih antara UI JavaFX/FXML dan model bisnis.
 
 ---
 
-## 📊 Class Diagram
+## 🚀 Cara Menjalankan Aplikasi
+
+### Persyaratan:
+- JDK 17 atau lebih baru
+- Apache Maven 3.8+
+
+### 1. Menjalankan Aplikasi GUI (JavaFX):
+Gunakan perintah Maven berikut di terminal:
+```bash
+mvn javafx:run
+```
+
+### 2. Menjalankan Versi CLI (Opsional):
+Jika ingin menjalankan antarmuka teks lama:
+```bash
+mvn compile exec:java -Dexec.mainClass="app.MainCLI"
+```
+
+### 3. Kompilasi & Pengujian:
+```bash
+mvn clean test
+```
+---
+## Class Diagram
 
 ```mermaid
 classDiagram
     direction TB
 
-    %% PACKAGE: model.user
     class Person {
         <<abstract>>
         #String id
@@ -76,7 +115,6 @@ classDiagram
     Person <|-- Admin : Inheritance
     Person <|-- Pelanggan : Inheritance
 
-    %% PACKAGE: model.bioskop
     class Bioskop {
         -String namaBioskop
         -String lokasi
@@ -149,7 +187,6 @@ classDiagram
     Jadwal "1" --> "1" Film : References
     Jadwal "1" --> "1" Studio : References
 
-    %% PACKAGE: model.tiket
     class Tiket {
         <<abstract>>
         #String idTiket
@@ -197,7 +234,6 @@ classDiagram
     Pemesanan "1" *-- "*" Tiket : Composition
     Pemesanan --> Pelanggan : Associated with
 
-    %% PACKAGE: main
     class MainCLI {
         -Bioskop bioskop
         -Scanner scanner
@@ -223,83 +259,39 @@ classDiagram
     TestPemesanan ..> Pelanggan : Tests
     TestPemesanan ..> Pemesanan : Tests
 ```
-
 ---
-
-## 📂 Struktur Proyek
+## 📁 Struktur Direktori Proyek
 
 ```
 oop-project-bioskop/
-├── src/
-│   ├── main/
-│   │   ├── MainCLI.java            # Entry point antarmuka interaktif CLI
-│   │   ├── TestAdmin.java          # Kelas pengujian fungsionalitas Admin
-│   │   └── TestPemesanan.java      # Kelas pengujian transaksi pemesanan
-│   └── model/
-│       ├── bioskop/
-│       │   ├── Bioskop.java        # Representasi data bioskop & manajemen jadwal
-│       │   ├── Film.java           # Model film
-│       │   ├── Jadwal.java         # Model jadwal pemutaran film & denah kursi
-│       │   ├── Kursi.java          # Model kursi & status ketersediaan
-│       │   └── Studio.java         # Model studio penayangan
-│       ├── tiket/
-│       │   ├── Pemesanan.java      # Model transaksi pemesanan tiket
-│       │   ├── Tiket.java          # Base abstract class tiket
-│       │   ├── TiketReguler.java   # Subclass tiket reguler
-│       │   └── TiketVIP.java       # Subclass tiket VIP
-│       └── user/
-│           ├── Admin.java          # Subclass akun administrator
-│           ├── Pelanggan.java      # Subclass akun pelanggan
-│           └── Person.java         # Base abstract class entitas pengguna
-├── .gitattributes
-├── .gitignore
-├── LICENSE
-└── README.md
+├── pom.xml
+├── README.md
+└── src/
+    ├── main/
+    │   ├── java/
+    │   │   ├── app/
+    │   │   │   ├── App.java              # JavaFX Application Setup
+    │   │   │   ├── AppContext.java       # Shared State / Singleton Bioskop & Admin
+    │   │   │   ├── MainApp.java          # Launcher class
+    │   │   │   └── MainCLI.java          # CLI interface lama
+    │   │   ├── controller/
+    │   │   │   ├── AdminController.java  # Controller Panel Admin & Rekap Transaksi
+    │   │   │   ├── CustomerController.java # Controller Katalog, Denah Kursi, E-Tiket
+    │   │   │   └── MainController.java   # Controller Navigasi Utama & Switcher View
+    │   │   └── model/
+    │   │       ├── bioskop/              # Bioskop, Film, Jadwal, Kursi, Studio
+    │   │       ├── tiket/                # Pemesanan, Tiket, TiketReguler, TiketVIP
+    │   │       └── user/                 # Admin, Pelanggan, Person
+    │   └── resources/
+    │       ├── css/
+    │       │   └── style.css             # Tema modern gelap Cinema XXI
+    │       └── fxml/
+    │           ├── main-view.fxml        # Shell Navigasi Header & Kontainer Dinamis
+    │           ├── admin/
+    │           │   └── admin-view.fxml   # Tampilan Tab Admin
+    │           └── customer/
+    │               └── customer-view.fxml # Tampilan Katalog, Denah Kursi, E-Tiket
+    └── test/
+        └── java/
+            └── app/                      # TestAdmin & TestPemesanan
 ```
-
----
-
-## 🚀 Panduan Menjalankan Program
-
-### Prasyarat
-* **Java Development Kit (JDK)** versi 8 atau yang lebih baru.
-
-### Kompilasi
-
-Buka terminal pada direktori root proyek dan jalankan perintah berikut:
-
-```bash
-# Untuk Linux / macOS
-javac -d bin $(find src -name "*.java")
-
-# Untuk Windows (Command Prompt)
-dir /s /B src\*.java > sources.txt
-javac -d bin @sources.txt
-del sources.txt
-
-# Untuk Windows (PowerShell)
-javac -d bin (Get-ChildItem -Recurse -Filter *.java src | Resolve-Path)
-```
-
-### Menjalankan Program
-
-1. **Menjalankan Program Utama (Interactive CLI):**
-   ```bash
-   java -cp bin main.MainCLI
-   ```
-
-2. **Menjalankan Pengujian Modul Admin:**
-   ```bash
-   java -cp bin main.TestAdmin
-   ```
-
-3. **Menjalankan Pengujian Alur Pemesanan:**
-   ```bash
-   java -cp bin main.TestPemesanan
-   ```
-
----
-
-## 📄 Lisensi
-
-Didistribusikan di bawah ketentuan lisensi open-source sesuai file [LICENSE](LICENSE).

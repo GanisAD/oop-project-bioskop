@@ -1,4 +1,4 @@
-package main;
+package app;
 
 import model.bioskop.Bioskop;
 import model.bioskop.Jadwal;

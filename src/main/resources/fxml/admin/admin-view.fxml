@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.AdminController"
+      spacing="16.0" style="-fx-background-color: transparent;">
+
+    <!-- TOP SUMMARY METRIC CARDS -->
+    <HBox spacing="16.0">
+        <!-- Stat Card 1 -->
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" spacing="4.0">
+            <Label text="TOTAL PENDAPATAN BIOSKOP" styleClass="stat-label" />
+            <Label fx:id="lblStatPendapatan" text="Rp 0" styleClass="stat-number" />
+        </VBox>
+
+        <!-- Stat Card 2 -->
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" spacing="4.0">
+            <Label text="TOTAL TRANSAKSI PEMESANAN" styleClass="stat-label" />
+            <Label fx:id="lblStatTotalPemesanan" text="0" styleClass="stat-number" style="-fx-text-fill: #10B981;" />
+        </VBox>
+
+        <!-- Stat Card 3 -->
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" spacing="4.0">
+            <Label text="FILM TAYANG" styleClass="stat-label" />
+            <Label fx:id="lblStatTotalFilm" text="0" styleClass="stat-number" style="-fx-text-fill: #60A5FA;" />
+        </VBox>
+
+        <!-- Stat Card 4 -->
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card" spacing="4.0">
+            <Label text="TOTAL STUDIO" styleClass="stat-label" />
+            <Label fx:id="lblStatTotalStudio" text="0" styleClass="stat-number" style="-fx-text-fill: #A78BFA;" />
+        </VBox>
+    </HBox>
+
+    <!-- ADMIN TABS -->
+    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" styleClass="tab-pane">
+        <!-- TAB 1: MANAJEMEN FILM -->
+        <Tab text="🎬 Manajemen Film">
+            <HBox spacing="16.0">
+                <padding>
+                    <Insets top="12.0" />
+                </padding>
+
+                <!-- Film Table -->
+                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                    <TableView fx:id="tblFilm" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colFilmJudul" text="Judul Film" prefWidth="240.0" />
+                            <TableColumn fx:id="colFilmGenre" text="Genre" prefWidth="130.0" />
+                            <TableColumn fx:id="colFilmDurasi" text="Durasi (Menit)" prefWidth="110.0" />
+                            <TableColumn fx:id="colFilmRating" text="Rating Usia" prefWidth="90.0" />
+                        </columns>
+                    </TableView>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Button fx:id="btnHapusFilm" text="🗑️ Hapus Film Terpilih" onAction="#handleHapusFilm" styleClass="btn-danger" />
+                    </HBox>
+                </VBox>
+
+                <!-- Form Tambah Film -->
+                <VBox spacing="12.0" prefWidth="320.0" minWidth="300.0" styleClass="card-panel">
+                    <Label text="TAMBAH FILM BARU" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #F59E0B;" />
+                    <Separator style="-fx-background-color: #334155;" />
+
+                    <VBox spacing="4.0">
+                        <Label text="Judul Film" style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;" />
+                        <TextField fx:id="txtFilmJudul" promptText="Masukkan judul film..." />
+                    </VBox>
+
+                    <VBox spacing="4.0">
+                        <Label text="Genre" style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;" />
+                        <ComboBox fx:id="cbFilmGenre" maxWidth="Infinity" promptText="Pilih Genre..." />
+                    </VBox>
+
+                    <VBox spacing="4.0">
+                        <Label text="Durasi (Menit)" style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;" />
+                        <TextField fx:id="txtFilmDurasi" promptText="Contoh: 120" />
+                    </VBox>
+
+                    <VBox spacing="4.0">
+                        <Label text="Rating Usia" style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;" />
+                        <ComboBox fx:id="cbFilmRating" maxWidth="Infinity" promptText="Pilih Rating..." />
+                    </VBox>
+
+                    <Region VBox.vgrow="ALWAYS" />
+                    <Button text="➕ Simpan Film Baru" onAction="#handleTambahFilm" maxWidth="Infinity" styleClass="btn-gold" />
+                </VBox>
+            </HBox>
+        </Tab>
+
+        <!-- TAB 2: MANAJEMEN JADWAL -->
+        <Tab text="🕒 Jadwal &amp; Studio">
+            <HBox spacing="16.0">
+                <padding>
+                    <Insets top="12.0" />
+                </padding>
+
+                <!-- Jadwal Table -->
+                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                    <TableView fx:id="tblJadwal" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colJadwalFilm" text="Film" prefWidth="220.0" />
+                            <TableColumn fx:id="colJadwalStudio" text="Studio" prefWidth="140.0" />
+                            <TableColumn fx:id="colJadwalWaktu" text="Waktu Tayang" prefWidth="150.0" />
+                            <TableColumn fx:id="colJadwalHarga" text="Harga Dasar" prefWidth="110.0" />
+                            <TableColumn fx:id="colJadwalKursi" text="Kursi Terjual" prefWidth="110.0" />
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <!-- Form Tambah Jadwal -->
+                <VBox spacing="12.0" prefWidth="320.0" minWidth="300.0" styleClass="card-panel">
+                    <Label text="BUKA JADWAL BARU" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #F59E0B;" />
+                    <Separator style="-fx-background-color: #334155;" />
+
+                    <VBox spacing="4.0">
+                        <Label text="Pilih Film" style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;" />
+                        <ComboBox fx:id="cbJadwalFilm" maxWidth="Infinity" promptText="Pilih film..." />
+                    </VBox>
+
+                    <VBox spacing="4.0">
+                        <Label text="Pilih Studio" style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;" />
+                        <ComboBox fx:id="cbJadwalStudio" maxWidth="Infinity" promptText="Pilih studio..." />
+                    </VBox>
+
+                    <VBox spacing="4.0">
+                        <Label text="Tanggal Tayang" style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;" />
+                        <DatePicker fx:id="dpJadwalTanggal" maxWidth="Infinity" />
+                    </VBox>
+
+                    <VBox spacing="4.0">
+                        <Label text="Jam Tayang" style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;" />
+                        <ComboBox fx:id="cbJadwalJam" maxWidth="Infinity" promptText="Pilih jam..." />
+                    </VBox>
+
+                    <VBox spacing="4.0">
+                        <Label text="Harga Dasar (Rp)" style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;" />
+                        <TextField fx:id="txtJadwalHarga" promptText="Contoh: 50000" />
+                    </VBox>
+
+                    <Region VBox.vgrow="ALWAYS" />
+                    <Button text="➕ Buka Jadwal Tayang" onAction="#handleTambahJadwal" maxWidth="Infinity" styleClass="btn-gold" />
+                </VBox>
+            </HBox>
+        </Tab>
+
+        <!-- TAB 3: REKAPITULASI TRANSAKSI -->
+        <Tab text="🧾 Rekap Transaksi">
+            <VBox spacing="12.0">
+                <padding>
+                    <Insets top="12.0" />
+                </padding>
+
+                <!-- Search / Header -->
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <Label text="DAFTAR TRANSAKSI PEMESANAN TIKET" style="-fx-font-weight: bold; -fx-text-fill: #F8FAFC;" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <TextField fx:id="txtSearchTransaksi" promptText="🔍 Cari kode booking / nama..." prefWidth="280.0" />
+                </HBox>
+
+                <!-- Transactions Table -->
+                <TableView fx:id="tblTransaksi" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colTrxKode" text="Kode Booking" prefWidth="120.0" />
+                        <TableColumn fx:id="colTrxPelanggan" text="Nama Pelanggan" prefWidth="150.0" />
+                        <TableColumn fx:id="colTrxNoHp" text="No. Telepon" prefWidth="120.0" />
+                        <TableColumn fx:id="colTrxFilm" text="Film" prefWidth="180.0" />
+                        <TableColumn fx:id="colTrxStudio" text="Studio" prefWidth="120.0" />
+                        <TableColumn fx:id="colTrxKursi" text="Kursi" prefWidth="80.0" />
+                        <TableColumn fx:id="colTrxTipe" text="Tipe Tiket" prefWidth="90.0" />
+                        <TableColumn fx:id="colTrxTotal" text="Total Bayar" prefWidth="120.0" />
+                        <TableColumn fx:id="colTrxWaktu" text="Waktu Transaksi" prefWidth="140.0" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+    </TabPane>
+
+</VBox>
