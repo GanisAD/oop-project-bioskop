@@ -18,9 +18,11 @@ public class Pelanggan extends Person {
     public void lihatJadwal(){
         System.out.println("Menampilkan jadwal film yang tersedia");
     }
-
-    public Tiket beliTiket(){
+    public Tiket beliTiket() {
         System.out.println("Membeli tiket film");
         return null;
     }
+
+    public String getEmail() { return email; }
+    public String getNoTelp() { return noTelp; }
 }

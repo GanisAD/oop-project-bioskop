@@ -1,6 +1,7 @@
-package main;
+package app;
 
 import java.util.Scanner;
+
 import model.bioskop.Bioskop;
 import model.bioskop.Jadwal;
 import model.tiket.Pemesanan;
