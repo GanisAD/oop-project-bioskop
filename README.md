@@ -73,9 +73,193 @@ mvn compile exec:java -Dexec.mainClass="app.MainCLI"
 ```bash
 mvn clean test
 ```
-
 ---
+## Class Diagram
 
+```mermaid
+classDiagram
+    direction TB
+
+    class Person {
+        <<abstract>>
+        #String id
+        #String nama
+        #String email
+        #String noTelp
+        +getId() String
+        +getNama() String
+        +getEmail() String
+        +getNoTelp() String
+        +tampilkanProfil()* void
+    }
+
+    class Admin {
+        -String levelAkses
+        +tampilkanProfil() void
+        +tambahFilm(Bioskop bioskop, Film film) void
+        +hapusFilm(Bioskop bioskop, String idFilm) boolean
+        +tambahJadwal(Bioskop bioskop, Jadwal jadwal) void
+        +kelolaStudio(Bioskop bioskop, Studio studio) void
+    }
+
+    class Pelanggan {
+        -int poinLoyalti
+        -List~Pemesanan~ riwayatPemesanan
+        +getPoinLoyalti() int
+        +tambahPoin(int poin) void
+        +tampilkanProfil() void
+        +buatPemesanan(Jadwal jadwal, List~Kursi~ kursiDipilih, String tipeTiket) Pemesanan
+        +getRiwayatPemesanan() List~Pemesanan~
+    }
+
+    Person <|-- Admin : Inheritance
+    Person <|-- Pelanggan : Inheritance
+
+    class Bioskop {
+        -String namaBioskop
+        -String lokasi
+        -List~Studio~ daftarStudio
+        -List~Film~ daftarFilm
+        -List~Jadwal~ daftarJadwal
+        +tambahStudio(Studio studio) void
+        +tambahFilm(Film film) void
+        +tambahJadwal(Jadwal jadwal) void
+        +cariFilm(String keyword) Film
+        +getDaftarStudio() List~Studio~
+        +getDaftarFilm() List~Film~
+        +getDaftarJadwal() List~Jadwal~
+        +tampilkanDaftarFilm() void
+        +tampilkanSemuaJadwal() void
+    }
+
+    class Film {
+        -String idFilm
+        -String judul
+        -String genre
+        -int durasiMenit
+        -double ratingUsia
+        +getIdFilm() String
+        +getJudul() String
+        +getGenre() String
+        +getDurasiMenit() int
+        +getDetailFilm() String
+    }
+
+    class Studio {
+        -String idStudio
+        -String namaStudio
+        -String tipeStudio
+        -List~Kursi~ daftarKursi
+        +getIdStudio() String
+        +getNamaStudio() String
+        +getTipeStudio() String
+        +getDaftarKursi() List~Kursi~
+        +cariKursi(String nomorKursi) Kursi
+    }
+
+    class Kursi {
+        -String nomorKursi
+        -boolean isTersedia
+        +getNomorKursi() String
+        +isTersedia() boolean
+        +setTersedia(boolean status) void
+    }
+
+    class Jadwal {
+        -String idJadwal
+        -Film film
+        -Studio studio
+        -String waktuMulai
+        -double hargaDasar
+        +getIdJadwal() String
+        +getFilm() Film
+        +getStudio() Studio
+        +getWaktuMulai() String
+        +getHargaDasar() double
+        +tampilkanDenahKursi() void
+        +pesanKursi(String nomorKursi) boolean
+    }
+
+    Bioskop "1" *-- "*" Studio : Composition
+    Bioskop "1" o-- "*" Film : Aggregation
+    Bioskop "1" o-- "*" Jadwal : Manages
+    Studio "1" *-- "*" Kursi : Composition
+    Jadwal "1" --> "1" Film : References
+    Jadwal "1" --> "1" Studio : References
+
+    class Tiket {
+        <<abstract>>
+        #String idTiket
+        #Jadwal jadwal
+        #Kursi kursi
+        #double harga
+        +getIdTiket() String
+        +getJadwal() Jadwal
+        +getKursi() Kursi
+        +hitungHarga()* double
+        +cetakTiket()* void
+    }
+
+    class TiketReguler {
+        +hitungHarga() double
+        +cetakTiket() void
+    }
+
+    class TiketVIP {
+        -double serviceFee
+        -List~String~ fasilitasTambahan
+        +hitungHarga() double
+        +cetakTiket() void
+        +getFasilitas() List~String~
+    }
+
+    Tiket <|-- TiketReguler : Inheritance
+    Tiket <|-- TiketVIP : Inheritance
+    Tiket "1" --> "1" Jadwal : References
+    Tiket "1" --> "1" Kursi : References
+
+    class Pemesanan {
+        -String idPemesanan
+        -Pelanggan pelanggan
+        -List~Tiket~ daftarTiket
+        -double totalBayar
+        -String statusPembayaran
+        +tambahTiket(Tiket tiket) void
+        +hitungTotal() double
+        +prosesPembayaran(double jumlahBayar) boolean
+        +cetakStruk() void
+    }
+
+    Pelanggan "1" o-- "*" Pemesanan : Has
+    Pemesanan "1" *-- "*" Tiket : Composition
+    Pemesanan --> Pelanggan : Associated with
+
+    class MainCLI {
+        -Bioskop bioskop
+        -Scanner scanner
+        +main(String[] args)$ void
+        +menuUtama() void
+        +menuAdmin() void
+        +menuPelanggan() void
+    }
+
+    class TestAdmin {
+        +main(String[] args)$ void
+    }
+
+    class TestPemesanan {
+        +main(String[] args)$ void
+    }
+
+    MainCLI ..> Bioskop : Controls
+    MainCLI ..> Admin : Uses
+    MainCLI ..> Pelanggan : Uses
+    TestAdmin ..> Admin : Tests
+    TestAdmin ..> Bioskop : Tests
+    TestPemesanan ..> Pelanggan : Tests
+    TestPemesanan ..> Pemesanan : Tests
+```
+---
 ## 📁 Struktur Direktori Proyek
 
 ```
