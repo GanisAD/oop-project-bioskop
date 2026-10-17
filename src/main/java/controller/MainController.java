@@ -14,6 +14,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controller tampilan utama ({@code main-view.fxml}).
+ * Menampilkan nama bioskop dan tombol navigasi untuk berpindah antara
+ * tampilan pelanggan ({@link CustomerController}) dan tampilan admin ({@link AdminController}).
+ *
+ * @author Zinedine Zain Arthurio Y. P.
+ * @author Aisyah Mahadma Shaquilla Brahmasari Putri
+ * @author Ganis Ahmad Darpita
+ * @version 1.0
+ */
 public class MainController implements Initializable {
 
     @FXML private Label lblNamaBioskop;
@@ -28,6 +38,13 @@ public class MainController implements Initializable {
     private Parent adminView;
     private AdminController adminController;
 
+    /**
+     * Dipanggil JavaFX setelah FXML dimuat: mengisi nama bioskop, memuat kedua tampilan,
+     * memasang listener navigasi, dan menampilkan tampilan pelanggan sebagai awal.
+     *
+     * @param location  lokasi FXML yang dimuat
+     * @param resources resource bundle yang digunakan (boleh {@code null})
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         lblNamaBioskop.setText(AppContext.getInstance().getBioskop().getNama().toUpperCase());
@@ -52,6 +69,9 @@ public class MainController implements Initializable {
         switchToCustomerView();
     }
 
+    /**
+     * Memuat {@code customer-view.fxml} dan {@code admin-view.fxml} beserta controller-nya. Jika gagal, error dicetak ke konsol.
+     */
     private void loadViews() {
         try {
             FXMLLoader custLoader = new FXMLLoader(getClass().getResource("/fxml/customer/customer-view.fxml"));
@@ -66,6 +86,9 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Menampilkan tampilan pelanggan, menyegarkan datanya, dan mengubah label peran.
+     */
     private void switchToCustomerView() {
         if (customerView != null) {
             mainContentArea.getChildren().setAll(customerView);
@@ -76,6 +99,9 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Menampilkan tampilan admin, menyegarkan datanya, dan mengubah label peran.
+     */
     private void switchToAdminView() {
         if (adminView != null) {
             mainContentArea.getChildren().setAll(adminView);

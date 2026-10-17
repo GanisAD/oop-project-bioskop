@@ -8,9 +8,28 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Kelas utama aplikasi JavaFX. Memuat tampilan utama dari FXML dan stylesheet,
+ * lalu menampilkan jendela aplikasi Cinema XXI.
+ *
+ * @author Zinedine Zain Arthurio Y. P.
+ * @author Aisyah Mahadma Shaquilla Brahmasari Putri
+ * @author Ganis Ahmad Darpita
+ * @version 1.0
+ */
 public class App extends Application {
+    /**
+     * Jendela utama aplikasi.
+     */
     private static Stage primaryStage;
 
+    /**
+     * Dipanggil JavaFX saat aplikasi dimulai: memuat {@code /fxml/main-view.fxml},
+     * memasang {@code /css/style.css}, lalu menampilkan jendela (1150x750, minimum 1000x680).
+     *
+     * @param stage jendela utama yang disediakan JavaFX
+     * @throws IOException jika file FXML gagal dimuat
+     */
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
@@ -28,10 +47,20 @@ public class App extends Application {
         stage.show();
     }
 
+    /**
+     * Mengambil jendela utama aplikasi.
+     *
+     * @return jendela utama
+     */
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
 
+    /**
+     * Titik masuk aplikasi; meluncurkan aplikasi JavaFX.
+     *
+     * @param args argumen baris perintah
+     */
     public static void main(String[] args) {
         launch(args);
     }

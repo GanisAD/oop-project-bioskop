@@ -8,7 +8,21 @@ import model.tiket.Pemesanan;
 import model.user.Admin;
 import model.user.Pelanggan;
 
+/**
+ * Versi aplikasi berbasis teks (command line) untuk pelanggan dan admin.
+ * Pelanggan dapat memesan tiket, sedangkan admin dapat melihat rekap transaksi dan menambah film.
+ *
+ * @author Zinedine Zain Arthurio Y. P.
+ * @author Aisyah Mahadma Shaquilla Brahmasari Putri
+ * @author Ganis Ahmad Darpita
+ * @version 1.0
+ */
 public class MainCLI {
+    /**
+     * Menjalankan menu utama berbasis teks sampai pengguna memilih keluar.
+     *
+     * @param args argumen baris perintah (tidak dipakai)
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         
