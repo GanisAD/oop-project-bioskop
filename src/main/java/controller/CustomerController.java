@@ -17,6 +17,16 @@ import model.user.Pelanggan;
 import java.net.URL;
 import java.util.*;
 
+/**
+ * Controller tampilan pelanggan ({@code customer-view.fxml}).
+ * Mengatur tiga layar yang bergantian ditampilkan: katalog film, pemilihan kursi,
+ * dan e-tiket (struk) setelah pemesanan berhasil.
+ *
+ * @author Zinedine Zain Arthurio Y. P.
+ * @author Aisyah Mahadma Shaquilla Brahmasari Putri
+ * @author Ganis Ahmad Darpita
+ * @version 1.0
+ */
 public class CustomerController implements Initializable {
 
     // View 1: Katalog
@@ -59,6 +69,13 @@ public class CustomerController implements Initializable {
     private Kursi selectedKursi;
     private Button selectedSeatButton;
 
+    /**
+     * Dipanggil JavaFX setelah FXML dimuat: memasang listener pencarian film dan pilihan tipe tiket,
+     * lalu menampilkan katalog.
+     *
+     * @param location  lokasi FXML yang dimuat
+     * @param resources resource bundle yang digunakan (boleh {@code null})
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Listener pencarian film
@@ -75,10 +92,19 @@ public class CustomerController implements Initializable {
         refreshData();
     }
 
+    /**
+     * Menyegarkan katalog film sesuai kata kunci pencarian saat ini.
+     */
     public void refreshData() {
         filterAndRenderCatalog(txtSearchFilm.getText());
     }
 
+    /**
+     * Menampilkan kartu film yang judul atau genrenya cocok dengan kata kunci.
+     * Jika tidak ada yang cocok, ditampilkan pesan kosong.
+     *
+     * @param query kata kunci pencarian; kosong atau {@code null} menampilkan semua film
+     */
     private void filterAndRenderCatalog(String query) {
         movieContainer.getChildren().clear();
         Bioskop bioskop = AppContext.getInstance().getBioskop();
@@ -113,6 +139,14 @@ public class CustomerController implements Initializable {
         }
     }
 
+    /**
+     * Membuat kartu tampilan satu film: poster, judul, badge rating/genre/durasi,
+     * dan tombol jam tayang yang dikelompokkan per studio.
+     *
+     * @param film       film yang ditampilkan
+     * @param jadwalList jadwal tayang milik film tersebut
+     * @return kartu film siap dimasukkan ke katalog
+     */
     private HBox createMovieCard(Film film, List<Jadwal> jadwalList) {
         HBox card = new HBox(20);
         card.getStyleClass().add("movie-card");
@@ -198,6 +232,12 @@ public class CustomerController implements Initializable {
         return card;
     }
 
+    /**
+     * Membuka layar pemilihan kursi untuk sebuah jadwal: mengisi informasi jadwal,
+     * mengosongkan form, dan membangun denah kursi.
+     *
+     * @param jadwal jadwal yang dipilih pelanggan
+     */
     private void openSeatSelection(Jadwal jadwal) {
         this.currentJadwal = jadwal;
         this.selectedKursi = null;
@@ -227,6 +267,9 @@ public class CustomerController implements Initializable {
         seatSelectionPane.setVisible(true);
     }
 
+    /**
+     * Membangun denah kursi dari baris A ke bawah dengan lorong di tengah. Kursi terisi dinonaktifkan, kursi tersedia dapat diklik.
+     */
     private void renderSeatGrid() {
         gridKursi.getChildren().clear();
         gridKursi.getColumnConstraints().clear();
@@ -275,6 +318,12 @@ public class CustomerController implements Initializable {
         }
     }
 
+    /**
+     * Menangani klik pada kursi: memilih kursi baru, atau membatalkan pilihan jika kursi yang sama diklik lagi.
+     *
+     * @param btn   tombol kursi yang diklik
+     * @param kursi kursi yang terkait dengan tombol
+     */
     private void onSeatClicked(Button btn, Kursi kursi) {
         // Batalkan seleksi sebelumnya
         if (selectedSeatButton != null && selectedSeatButton != btn) {
@@ -305,6 +354,9 @@ public class CustomerController implements Initializable {
         updateTotalHarga();
     }
 
+    /**
+     * Menghitung ulang total harga: harga dasar jadwal ditambah Rp 25.000 jika tiket VIP dipilih, atau Rp 0 jika belum ada kursi dipilih.
+     */
     private void updateTotalHarga() {
         if (currentJadwal == null || selectedKursi == null) {
             lblTotalHarga.setText("Rp 0");
@@ -318,6 +370,9 @@ public class CustomerController implements Initializable {
         lblTotalHarga.setText(String.format("Rp %,.0f", total));
     }
 
+    /**
+     * Menangani tombol kembali: menutup layar kursi dan menampilkan katalog.
+     */
     @FXML
     public void handleBackToCatalog() {
         seatSelectionPane.setVisible(false);
@@ -326,6 +381,9 @@ public class CustomerController implements Initializable {
         refreshData();
     }
 
+    /**
+     * Menangani tombol konfirmasi: memvalidasi kursi, nama, dan nomor HP, membuat pemesanan, lalu menampilkan e-tiket (atau pesan gagal jika kursi sudah terisi).
+     */
     @FXML
     public void handleKonfirmasiPemesanan() {
         if (selectedKursi == null) {
@@ -357,6 +415,13 @@ public class CustomerController implements Initializable {
         }
     }
 
+    /**
+     * Mengisi dan menampilkan layar e-tiket (struk) dari pemesanan yang berhasil.
+     *
+     * @param pesanan   pemesanan yang berhasil dibuat
+     * @param kodeKursi kode kursi yang dipesan
+     * @param tipeTiket jenis tiket yang dipilih
+     */
     private void showReceipt(Pemesanan pesanan, String kodeKursi, String tipeTiket) {
         lblReceiptKodeBooking.setText(pesanan.getKodeBooking());
         lblReceiptFilm.setText(currentJadwal.getFilm().getJudul());
@@ -373,6 +438,9 @@ public class CustomerController implements Initializable {
         receiptPane.setVisible(true);
     }
 
+    /**
+     * Menangani tombol selesai: menutup e-tiket dan kembali ke katalog.
+     */
     @FXML
     public void handleFinishBooking() {
         receiptPane.setVisible(false);
@@ -381,6 +449,12 @@ public class CustomerController implements Initializable {
         refreshData();
     }
 
+    /**
+     * Menentukan nama kelas CSS badge sesuai rating usia.
+     *
+     * @param rating rating usia, misalnya {@code "SU"}, {@code "13+"}, {@code "17+"}, atau {@code "21+"}
+     * @return nama kelas CSS badge; {@code "badge-rating-default"} jika rating {@code null} atau tidak dikenal
+     */
     public static String getRatingBadgeClass(String rating) {
         if (rating == null) return "badge-rating-default";
         String r = rating.trim().toUpperCase();
@@ -396,6 +470,13 @@ public class CustomerController implements Initializable {
         return "badge-rating-default";
     }
 
+    /**
+     * Menampilkan dialog pemberitahuan dan menunggu pengguna menutupnya.
+     *
+     * @param type    jenis dialog (peringatan, informasi, error, dan sebagainya)
+     * @param title   judul dialog
+     * @param message isi pesan dialog
+     */
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

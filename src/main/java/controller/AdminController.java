@@ -21,6 +21,15 @@ import java.time.LocalTime;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+/**
+ * Controller panel admin ({@code admin-view.fxml}).
+ * Mengelola ringkasan statistik, data film, jadwal tayang, dan rekap transaksi.
+ *
+ * @author Zinedine Zain Arthurio Y. P.
+ * @author Aisyah Mahadma Shaquilla Brahmasari Putri
+ * @author Ganis Ahmad Darpita
+ * @version 1.0
+ */
 public class AdminController implements Initializable {
 
     // Metric Summary Labels
@@ -67,6 +76,13 @@ public class AdminController implements Initializable {
     @FXML private TableColumn<Pemesanan, String> colTrxTotal;
     @FXML private TableColumn<Pemesanan, String> colTrxWaktu;
 
+    /**
+     * Dipanggil JavaFX setelah FXML dimuat: menyiapkan kolom tabel, pilihan form,
+     * listener pencarian transaksi, lalu memuat data awal.
+     *
+     * @param location  lokasi FXML yang dimuat
+     * @param resources resource bundle yang digunakan (boleh {@code null})
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupTableColumns();
@@ -78,6 +94,9 @@ public class AdminController implements Initializable {
         refreshData();
     }
 
+    /**
+     * Menghubungkan kolom tabel film, jadwal, dan transaksi dengan properti objeknya, termasuk badge rating pada tabel film.
+     */
     private void setupTableColumns() {
         // Kolom Film
         colFilmJudul.setCellValueFactory(new PropertyValueFactory<>("judul"));
@@ -119,6 +138,9 @@ public class AdminController implements Initializable {
         colTrxWaktu.setCellValueFactory(new PropertyValueFactory<>("waktuFormat"));
     }
 
+    /**
+     * Mengisi pilihan genre, rating, dan jam tayang, serta nilai awal tanggal dan harga pada form.
+     */
     private void setupFormOptions() {
         cbFilmGenre.setItems(FXCollections.observableArrayList(
                 "Action", "Sci-Fi", "Petualangan", "Horor", "Komedi", "Drama", "Animasi", "Thriller"
@@ -135,6 +157,9 @@ public class AdminController implements Initializable {
         txtJadwalHarga.setText("45000");
     }
 
+    /**
+     * Menyegarkan seluruh tampilan admin: kartu statistik (omset, jumlah pemesanan, film, studio), tabel film, tabel jadwal, pilihan form jadwal, dan tabel transaksi.
+     */
     public void refreshData() {
         Bioskop bioskop = AppContext.getInstance().getBioskop();
 
@@ -162,6 +187,11 @@ public class AdminController implements Initializable {
         filterTransactions(txtSearchTransaksi.getText());
     }
 
+    /**
+     * Menyaring tabel transaksi berdasarkan kode booking, nama pelanggan, atau judul film.
+     *
+     * @param query kata kunci pencarian; kosong atau {@code null} menampilkan semua transaksi
+     */
     private void filterTransactions(String query) {
         Bioskop bioskop = AppContext.getInstance().getBioskop();
         ObservableList<Pemesanan> list = FXCollections.observableArrayList();
@@ -178,6 +208,9 @@ public class AdminController implements Initializable {
         tblTransaksi.setItems(list);
     }
 
+    /**
+     * Menangani tombol tambah film: memvalidasi form, mendaftarkan film lewat {@link model.user.Admin}, lalu mengosongkan form dan menyegarkan data.
+     */
     @FXML
     public void handleTambahFilm() {
         String judul = txtFilmJudul.getText().trim();
@@ -213,6 +246,9 @@ public class AdminController implements Initializable {
         refreshData();
     }
 
+    /**
+     * Menangani tombol hapus film: meminta konfirmasi untuk film yang dipilih di tabel, lalu menghapus film beserta jadwalnya.
+     */
     @FXML
     public void handleHapusFilm() {
         Film selected = tblFilm.getSelectionModel().getSelectedItem();
@@ -236,6 +272,9 @@ public class AdminController implements Initializable {
         }
     }
 
+    /**
+     * Menangani tombol buka jadwal: memvalidasi form, menggabungkan tanggal dan jam, lalu membuat jadwal lewat {@link model.user.Admin}.
+     */
     @FXML
     public void handleTambahJadwal() {
         Film film = cbJadwalFilm.getValue();
@@ -273,6 +312,13 @@ public class AdminController implements Initializable {
         }
     }
 
+    /**
+     * Menampilkan dialog pemberitahuan dan menunggu pengguna menutupnya.
+     *
+     * @param type    jenis dialog (peringatan, informasi, error, dan sebagainya)
+     * @param title   judul dialog
+     * @param message isi pesan dialog
+     */
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
