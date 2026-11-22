@@ -9,24 +9,39 @@ import model.bioskop.Studio;
 
 /**
  * Pengguna dengan peran pengelola bioskop.
+ * Merupakan turunan dari {@link Person} dan mengimplementasikan perilaku polimorfik peran Admin.
  * Admin menerima data mentah dari form (teks dan angka), lalu meneruskannya ke {@link Bioskop}
  * yang bertugas membuat objek {@link Film}, {@link Studio}, dan {@link Jadwal}.
  *
  * @author Zinedine Zain Arthurio Y. P.
  * @author Aisyah Mahadma Shaquilla Brahmasari Putri
  * @author Ganis Ahmad Darpita
- * @version 1.0
+ * @version 2.0
  */
 public class Admin extends Person {
 
     /**
-     * Membuat admin baru.
+     * Membuat admin baru dengan memanggil konstruktor superclass {@link Person}.
      *
      * @param id   ID unik admin
      * @param nama nama admin
      */
     public Admin(String id, String nama) {
         super(id, nama);
+    }
+
+    @Override
+    public String getRole() {
+        return "Admin";
+    }
+
+    @Override
+    public void tampilkanDashboardInfo() {
+        System.out.println("=== DASHBOARD ADMIN ===");
+        System.out.println("ID    : " + getId());
+        System.out.println("Nama  : " + getNama());
+        System.out.println("Peran : " + getRole());
+        System.out.println("Akses : Kelola Data Film, Studio, Jadwal, dan Riwayat Transaksi");
     }
 
     // Menerima input teks form, Bioskop yang membuat objek Film
