@@ -1,27 +1,31 @@
 package model.bioskop;
 
 /**
- * Satu kursi di studio, dikenali dari baris (huruf) dan nomor, misalnya {@code A1}.
- * Menyimpan status tersedia atau terisi.
+ * Kelas abstrak (abstract superclass) yang merepresentasikan kursi di dalam studio bioskop.
+ * Dikenali dari baris (huruf) dan nomor kursi (misal: A1, B5).
+ * Menyediakan kerangka dasar status ketersediaan kursi dan kontrak polimorfik
+ * untuk tipe kursi, multiplier harga, fasilitas, dan penggandaan (cloning).
  *
  * @author Zinedine Zain Arthurio Y. P.
  * @author Aisyah Mahadma Shaquilla Brahmasari Putri
  * @author Ganis Ahmad Darpita
- * @version 1.0
+ * @version 2.0
  */
-public class Kursi {
+public abstract class Kursi {
     /**
      * Huruf baris kursi: 'A', 'B', 'C', dan seterusnya.
      */
-    private char baris;   // 'A', 'B', 'C', ...
+    private char baris;
+
     /**
      * Nomor kursi pada baris: 1, 2, 3, dan seterusnya.
      */
-    private int nomor;    // 1, 2, 3, ...
+    private int nomor;
+
     /**
-     * Status kursi; {@code true} berarti masih tersedia.
+     * Status ketersediaan kursi; {@code true} berarti masih tersedia.
      */
-    private boolean tersedia; // Saran dari dosen
+    private boolean tersedia;
 
     /**
      * Membuat kursi baru yang berstatus tersedia.
@@ -32,13 +36,12 @@ public class Kursi {
     public Kursi(char baris, int nomor) {
         this.baris = baris;
         this.nomor = nomor;
-        this.tersedia = true; // Default selalu tersedia saat awal dibuat
+        this.tersedia = true;
     }
 
-    // Copy Constructor: Memungkinkan pembuatan salinan kursi khusus untuk tiap jadwal
     /**
-     * Copy constructor: membuat salinan kursi (baris dan nomor sama) untuk tiap jadwal.
-     * Salinan selalu berstatus tersedia.
+     * Copy constructor: membuat salinan kursi dari objek sumber untuk jadwal tertentu.
+     * Salinan selalu berstatus tersedia secara default untuk mencegah shared reference bug.
      *
      * @param sumber kursi yang disalin
      */
@@ -49,21 +52,82 @@ public class Kursi {
     }
 
     /**
+     * Mengambil nama jenis/tipe kursi secara polimorfik.
+     *
+     * @return jenis kursi (misal: "Reguler" atau "VIP")
+     */
+    public abstract String getTipeKursi();
+
+    /**
+     * Mengambil pengali harga (multiplier) untuk jenis kursi ini.
+     *
+     * @return faktor pengali harga
+     */
+    public abstract double getMultiplier();
+
+    /**
+     * Mengambil deskripsi fasilitas yang menyertai kursi ini.
+     *
+     * @return deskripsi fasilitas kursi
+     */
+    public abstract String getFasilitas();
+
+    /**
+     * Membuat salinan (clone) polimorfik dari kursi ini dengan status tersedia.
+     * Mencegah shared reference antar-jadwal tayang.
+     *
+     * @return objek Kursi baru hasil salinan
+     */
+    public abstract Kursi salin();
+
+    /**
+     * Menghitung harga tiket untuk kursi ini berdasarkan harga dasar jadwal tayang.
+     *
+     * @param hargaDasar harga dasar jadwal dalam rupiah
+     * @return estimasi harga kursi setelah dikalikan multiplier
+     */
+    public double hitungHargaKursi(double hargaDasar) {
+        return hargaDasar * getMultiplier();
+    }
+
+    /**
      * Mengambil huruf baris.
      *
      * @return huruf baris kursi
      */
-    public char getBaris() { return baris; }
+    public char getBaris() {
+        return baris;
+    }
+
+    /**
+     * Mengubah huruf baris kursi.
+     *
+     * @param baris huruf baris baru
+     */
+    public void setBaris(char baris) {
+        this.baris = baris;
+    }
+
     /**
      * Mengambil nomor kursi.
      *
      * @return nomor kursi pada baris
      */
-    public int getNomor() { return nomor; }
+    public int getNomor() {
+        return nomor;
+    }
 
-    // Getter & Setter status ketersediaan
     /**
-     * Memeriksa status kursi.
+     * Mengubah nomor kursi.
+     *
+     * @param nomor nomor kursi baru
+     */
+    public void setNomor(int nomor) {
+        this.nomor = nomor;
+    }
+
+    /**
+     * Memeriksa status ketersediaan kursi.
      *
      * @return {@code true} jika kursi masih tersedia
      */
@@ -80,21 +144,19 @@ public class Kursi {
         this.tersedia = tersedia;
     }
 
-    // Behavior untuk memesan kursi
     /**
-     * Memesan kursi ini.
+     * Memesan kursi ini jika masih tersedia.
      *
-     * @return {@code true} jika berhasil; {@code false} jika kursi sudah terisi
+     * @return {@code true} jika berhasil dipesan; {@code false} jika kursi sudah terisi
      */
     public boolean pesan() {
         if (!tersedia) {
-            return false; // Gagal karena sudah dipesan
+            return false;
         }
         tersedia = false;
         return true;
     }
 
-    // Behavior untuk membatalkan pesanan jika diperlukan
     /**
      * Membatalkan pesanan sehingga kursi tersedia kembali.
      */

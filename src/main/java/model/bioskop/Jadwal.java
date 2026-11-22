@@ -52,7 +52,7 @@ public class Jadwal {
         this.daftarKursiJadwal = new ArrayList<>();
         
         for (Kursi k : studio.getDaftarKursi()) {
-            daftarKursiJadwal.add(new Kursi(k));
+            daftarKursiJadwal.add(k.salin());
         }
     }
 

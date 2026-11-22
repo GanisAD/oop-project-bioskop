@@ -6,46 +6,64 @@ import java.util.ArrayList;
 
 import model.bioskop.Jadwal;
 import model.bioskop.Kursi;
+import model.bioskop.KursiVIP;
 import model.user.Pelanggan;
 
 /**
  * Satu sesi pemesanan tiket oleh seorang {@link Pelanggan} untuk satu {@link Jadwal}.
- * Pemesanan menyimpan daftar {@link Tiket}, menghitung total harga, dan dapat mencetak struk.
+ * Pemesanan mengelola koleksi polimorfik {@link Tiket}, menghitung total harga,
+ * memproses pembayaran melalui {@link MetodePembayaran}, dan mengimplementasikan {@link Printable}.
  *
  * @author Zinedine Zain Arthurio Y. P.
  * @author Aisyah Mahadma Shaquilla Brahmasari Putri
  * @author Ganis Ahmad Darpita
- * @version 1.0
+ * @version 2.0
  */
-public class Pemesanan {
+public class Pemesanan implements Printable {
     /**
      * Penghitung bersama semua pemesanan, dipakai untuk membuat kode booking berurutan.
      */
     private static int counter = 0;
+
     /**
      * Kode booking unik, formatnya {@code BOOK-0001}, {@code BOOK-0002}, dan seterusnya.
      */
     private String kodeBooking;
+
     /**
      * Pelanggan yang melakukan pemesanan.
      */
     private Pelanggan pelanggan;
+
     /**
      * Jadwal tayang yang dipesan.
      */
     private Jadwal jadwal;
+
     /**
-     * Daftar tiket yang sudah masuk ke pemesanan ini.
+     * Daftar tiket polimorfik (TiketReguler atau TiketVIP) yang sudah masuk ke pemesanan ini.
      */
     private ArrayList<Tiket> daftarTiket;
+
     /**
      * Waktu pemesanan dibuat.
      */
     private LocalDateTime waktuTransaksi;
+
     /**
      * Total harga seluruh tiket dalam pemesanan ini.
      */
     private double totalHarga;
+
+    /**
+     * Metode pembayaran yang digunakan.
+     */
+    private MetodePembayaran metodePembayaran;
+
+    /**
+     * Status pelunasan transaksi.
+     */
+    private boolean sudahDibayar;
 
     /**
      * Membuat pemesanan baru dengan kode booking otomatis dan waktu transaksi saat ini.
@@ -61,15 +79,15 @@ public class Pemesanan {
         this.daftarTiket = new ArrayList<>();
         this.waktuTransaksi = LocalDateTime.now();
         this.totalHarga = 0.0;
+        this.sudahDibayar = false;
     }
 
-    
     /**
      * Memesan satu kursi berdasarkan kodenya lalu menambahkan tiketnya ke pemesanan.
      * Jenis tiket {@code "VIP"} (tanpa membedakan huruf besar/kecil) menghasilkan {@link TiketVIP};
-     * selain itu menghasilkan {@link TiketReguler}. Total harga ikut bertambah.
+     * selain itu menghasilkan {@link TiketReguler}. Total harga dihitung secara polimorfik.
      *
-     * @param kodeKursi kode kursi, misalnya {@code "A1"}
+     * @param kodeKursi  kode kursi, misalnya {@code "A1"}
      * @param jenisTiket jenis tiket, {@code "VIP"} atau {@code "Reguler"}
      * @return {@code true} jika berhasil; {@code false} jika kode kosong, kursi tidak ada, atau sudah terisi
      */
@@ -79,20 +97,17 @@ public class Pemesanan {
             return false;
         }
 
-        
         Kursi kursi = jadwal.cariKursi(kodeKursi);
         if (kursi == null) {
             System.out.println("[GAGAL] Kursi " + kodeKursi + " tidak ada di studio " + jadwal.getStudio().getNama());
             return false;
         }
 
-        
         if (!jadwal.pesanKursi(kursi)) {
             System.out.println("[GAGAL] Kursi " + kodeKursi + " sudah terisi.");
             return false;
         }
 
-        
         Tiket tiket;
         if ("VIP".equalsIgnoreCase(jenisTiket)) {
             tiket = new TiketVIP(jadwal, kursi);
@@ -105,7 +120,23 @@ public class Pemesanan {
         return true;
     }
 
-    // Overload Paramter Methode 1
+    /**
+     * Overload method untuk memesan kursi berdasarkan kode kursi saja,
+     * tipe tiket ditentukan secara otomatis sesuai jenis kursi ({@link KursiVIP} atau reguler).
+     *
+     * @param kodeKursi kode kursi yang dipesan
+     * @return {@code true} jika berhasil dipesan
+     */
+    public boolean tambahKursi(String kodeKursi) {
+        if (kodeKursi == null || kodeKursi.isBlank()) {
+            System.out.println("[GAGAL] Kode kursi tidak boleh kosong!");
+            return false;
+        }
+        Kursi kursi = jadwal.cariKursi(kodeKursi);
+        String jenis = (kursi instanceof KursiVIP) ? "VIP" : "Reguler";
+        return tambahKursi(kodeKursi, jenis);
+    }
+
     /**
      * Versi overload dari {@link #tambahKursi(String, String)} yang menerima objek {@link Kursi}.
      *
@@ -118,8 +149,23 @@ public class Pemesanan {
             System.out.println("[GAGAL] Objek kursi tidak valid (null)!");
             return false;
         }
-        
         return tambahKursi(kursi.getKode(), jenisTiket);
+    }
+
+    /**
+     * Memproses pembayaran menggunakan implementasi polimorfik dari {@link MetodePembayaran}.
+     *
+     * @param metode implementasi metode pembayaran (misal: Tunai atau QRIS)
+     * @return {@code true} jika pembayaran sukses
+     */
+    public boolean bayar(MetodePembayaran metode) {
+        if (metode == null) {
+            System.out.println("[GAGAL] Metode pembayaran belum dipilih!");
+            return false;
+        }
+        this.metodePembayaran = metode;
+        this.sudahDibayar = metode.prosesPembayaran(this.totalHarga);
+        return this.sudahDibayar;
     }
 
     /**
@@ -145,7 +191,18 @@ public class Pemesanan {
         }
         System.out.println("----------------------------------------");
         System.out.println("TOTAL HARGA  : Rp" + String.format("%,.0f", totalHarga));
+        if (metodePembayaran != null) {
+            System.out.println("Pembayaran   : " + metodePembayaran.getNamaMetode() + (sudahDibayar ? " [LUNAS]" : " [BELUM LUNAS]"));
+        }
         System.out.println("========================================");
+    }
+
+    /**
+     * Implementasi kontrak antarmuka {@link Printable}.
+     */
+    @Override
+    public void cetak() {
+        cetakStruk();
     }
 
     /**
@@ -153,37 +210,81 @@ public class Pemesanan {
      *
      * @return kode booking
      */
-    public String getKodeBooking() { return kodeBooking; }
+    public String getKodeBooking() {
+        return kodeBooking;
+    }
+
     /**
      * Mengambil pelanggan pemesan.
      *
      * @return pelanggan pemesan
      */
-    public Pelanggan getPelanggan() { return pelanggan; }
+    public Pelanggan getPelanggan() {
+        return pelanggan;
+    }
+
     /**
      * Mengambil jadwal yang dipesan.
      *
      * @return jadwal tayang
      */
-    public Jadwal getJadwal() { return jadwal; }
+    public Jadwal getJadwal() {
+        return jadwal;
+    }
+
     /**
      * Mengambil daftar tiket pada pemesanan ini.
      *
      * @return daftar tiket
      */
-    public ArrayList<Tiket> getDaftarTiket() { return daftarTiket; }
+    public ArrayList<Tiket> getDaftarTiket() {
+        return daftarTiket;
+    }
+
     /**
      * Mengambil total harga pemesanan.
      *
      * @return total harga dalam rupiah
      */
-    public double getTotalHarga() { return totalHarga; }
+    public double getTotalHarga() {
+        return totalHarga;
+    }
+
     /**
      * Mengambil waktu transaksi.
      *
      * @return waktu pemesanan dibuat
      */
-    public LocalDateTime getWaktuTransaksi() { return waktuTransaksi; }
+    public LocalDateTime getWaktuTransaksi() {
+        return waktuTransaksi;
+    }
+
+    /**
+     * Mengambil metode pembayaran yang digunakan.
+     *
+     * @return metode pembayaran
+     */
+    public MetodePembayaran getMetodePembayaran() {
+        return metodePembayaran;
+    }
+
+    /**
+     * Menetapkan metode pembayaran untuk pemesanan ini.
+     *
+     * @param metodePembayaran metode pembayaran yang dipilih
+     */
+    public void setMetodePembayaran(MetodePembayaran metodePembayaran) {
+        this.metodePembayaran = metodePembayaran;
+    }
+
+    /**
+     * Memeriksa apakah pemesanan sudah dibayar.
+     *
+     * @return {@code true} jika sudah lunas
+     */
+    public boolean isSudahDibayar() {
+        return sudahDibayar;
+    }
 
     /**
      * Mengambil nama pelanggan untuk ditampilkan di tabel.

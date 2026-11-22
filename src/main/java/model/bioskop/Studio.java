@@ -49,13 +49,21 @@ public class Studio {
     }
 
     /**
-     * Membuat semua kursi: baris dari 'A' dan nomor dari 1 sampai {@code kursiPerBaris}.
+     * Membuat semua kursi secara polimorfik: studio Premiere/VIP atau baris terakhir
+     * menggunakan {@link KursiVIP}, sedangkan baris lainnya menggunakan {@link KursiReguler}.
      */
     private void buatKursi() {
         for (int i = 0; i < jumlahBaris; i++) {
             char baris = (char) ('A' + i);
+            boolean isVip = nama.toLowerCase().contains("premiere") 
+                         || nama.toLowerCase().contains("vip") 
+                         || (i == jumlahBaris - 1);
             for (int nomor = 1; nomor <= kursiPerBaris; nomor++) {
-                daftarKursi.add(new Kursi(baris, nomor));
+                if (isVip) {
+                    daftarKursi.add(new KursiVIP(baris, nomor));
+                } else {
+                    daftarKursi.add(new KursiReguler(baris, nomor));
+                }
             }
         }
     }
